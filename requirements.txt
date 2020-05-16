@@ -1,0 +1,4 @@
+mistune==2.0.0a4
+cjkwrap==2.2
+wcwidth==0.1.9
+texttable==1.6.2
