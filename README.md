@@ -2,6 +2,30 @@
 
 Converter from Markdown to the [Gemini](https://gemini.circumlunar.space/) text format. It works as a Python module, or a command line application.
 
+Beyond regular Markdown, it supports tables! And converts them into Unicode plaintext tables like this:
+```
+┌──────────────┬──────┐
+│     foo      │ bar  │
+╞══════════════╪══════╡
+│          baz │ bim  │
+├──────────────┼──────┤
+│ testdfsdfsdf │ yeah │
+└──────────────┴──────┘
+```
+or like this for ASCII:
+```
++--------------+------+
+|     foo      | bar  |
++==============+======+
+|          baz | bim  |
++--------------+------+
+| testdfsdfsdf | yeah |
++--------------+------+
+```
+This means all your GFM tables will still work and look nice.
+
+Anything else that it doesn't understand will remain the same as when you wrote it, like strikethrough for example.
+
 ## Installation
 ```
 pip3 install md2gemini
