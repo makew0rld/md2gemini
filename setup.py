@@ -1,11 +1,12 @@
 import setuptools
+from md2gemini import __version__
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="md2gemini", # Replace with your own username
-    version="1.0.0",
+    version=__version__,
     author="makeworld",
     author_email="example@example.com",
     description="Convert Markdown to the Gemini text format",
@@ -26,5 +27,10 @@ setuptools.setup(
         "mistune>=2.0.0a4,<3",
         "cjkwrap",
         "wcwidth",
-    ]
+    ],
+    entry_points={
+        "console_scripts": [
+            "md2gemini = md2gemini:main"
+        ]
+    }
 )
