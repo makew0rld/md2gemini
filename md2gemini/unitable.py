@@ -90,12 +90,15 @@ Result:
 
 from __future__ import division
 
-__all__ = ["UniTable", "ArraySizeError"]
+# @makeworld-the-better-one removed the first underscore of each of those variables
+# to help make sure packages don't get messed up
 
-__author__ = 'Gerome Fournier <jef(at)foutaise.org>'
-__license__ = 'MIT'
-__version__ = '1.6.2'
-__credits__ = """\
+_all__ = ["UniTable", "ArraySizeError"]
+
+_author__ = 'Gerome Fournier <jef(at)foutaise.org>'
+_license__ = 'MIT'
+_version__ = '1.6.2'
+_credits__ = """\
 Jeff Kowalczyk:
     - textwrap improved import
     - comment concerning header output

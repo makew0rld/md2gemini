@@ -53,5 +53,4 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=
     return gemtext
 
 __all__ = ["GeminiRenderer", "md2gemini"]
-
 __version__ = "1.0.0"  # TODO: Change version
