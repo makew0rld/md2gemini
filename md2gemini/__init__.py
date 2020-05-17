@@ -1,8 +1,31 @@
 import mistune
-from .renderers import GeminiRenderer, NEWLINE
+from .renderers import GeminiRenderer, NEWLINE, PARAGRAPH_DELIM, LINK_DELIM
 import argparse
 import sys
 import os
+
+def __text_between(text, delim, n=0):
+    """Get the text between two delimeters.
+    
+    n: Which occurence of the delimeter pair to act on, zero-indexed.
+    """
+
+    return text.split(delim)[n+1]
+
+
+def __replace_between(text, delim, new_text, n=0):
+    """Replace the text between two delimeters, and get the full text back.
+    
+    n: Which occurence of the delimeter pair to act on, zero-indexed.
+    """
+
+    start = delim.join(text.split(delim)[:n+1])
+    end = delim.join(text.split(delim)[n+2:])
+    #return start + delim + new_text + delim + end
+    return start + new_text + end
+
+
+
 
 def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=False):
     """Convert the provided markdown text to the gemini format.
@@ -41,6 +64,22 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=
     gemtext = gem(markdown)
     
     # Post processing
+    #final_gemtext = ""
+    # Remove newlines within paragraphs, and add two newlines after them.
+    while PARAGRAPH_DELIM in gemtext:  # While there's still unprocessed paragraphs
+        try:
+            pg = __text_between(gemtext, PARAGRAPH_DELIM).strip()
+            pg = pg.replace("\r\n", "\n")  # Make all newlines the same
+            pg = pg.replace("\n", " ")  # Get rid of newlines in the same paragraph, like markdown does
+            pg += NEWLINE * 2
+            gemtext = __replace_between(gemtext, PARAGRAPH_DELIM, pg)
+        except IndexError:
+            # No more paragraphs to process
+            break
+
+    gemtext = gemtext.replace(LINK_DELIM, NEWLINE)
+
+    # Remove left whitespace in the lines after links
     gemlines = gemtext.splitlines()[:-1]
     pre = False  # Whether we're in a preformatted area or not
     for i, line in enumerate(gemlines):
@@ -51,8 +90,8 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=
         if line.startswith("=>") and not pre:
             # It's a link, fix the next line by removing left whitespace
             gemlines[i+1] = gemlines[i+1].lstrip()
-
     gemtext = NEWLINE.join(gemlines)
+
     return gemtext
 
 # Main functions, for running as a script
@@ -115,5 +154,5 @@ def main():
         __convert_file(file)
 
 
-__all__ = ["GeminiRenderer", "md2gemini", "main"]
+__all__ = ["GeminiRenderer", "md2gemini", "main", "NEWLINE", "__version__"]
 __version__ = "1.0.1"

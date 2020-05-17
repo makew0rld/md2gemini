@@ -6,6 +6,8 @@ import mistune
 from .unitable import UniTable, ArraySizeError
 
 NEWLINE = "\r\n"
+PARAGRAPH_DELIM = "\x02"  # The marker for paragraph start and end, for post processing
+LINK_DELIM = "\x03"
 
 class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be used but this isn't available
     
@@ -27,9 +29,13 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         self.table_cols_align = []  # List of column alignments: ["l", "r", "c"]
 
     def _gem_link(self, link, text=None):
+        # Links are handled in post processing, these control characters
+        # are just used to denote paragraph start and end. They were picked
+        # because they will never be typed in normal text editing.
+
         if text is None:
-            return "=> " + link.strip()# + NEWLINE
-        return "=> " + link.strip() + " " + text.strip()# + NEWLINE
+            return LINK_DELIM + "=> " + link.strip() + LINK_DELIM
+        return LINK_DELIM + "=> " + link.strip() + " " + text.strip() + LINK_DELIM
 
     # Inline elements
 
@@ -41,7 +47,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
     def link(self, link, text=None, title=None):
         # title is ignored because it doesn't apply to Gemini
         # TODO: Support using footnotes instead of putting inline links on their own line
-        return NEWLINE + self._gem_link(link, text) + NEWLINE
+        return NEWLINE + self._gem_link(link, text)
     
     def image(self, src, alt="", title=None):
         """Turn images into regular Gemini links."""
@@ -62,8 +68,8 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         return "`" + text + "`"
     
     def linebreak(self):
-        return NEWLINE
         #return "<LB>"
+        return NEWLINE
     
     def newline(self):        
         #return "<NL>"
@@ -75,8 +81,10 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
     # Block level elements
 
     def paragraph(self, text):
-        return text + NEWLINE * 2
-        #return text + "<PG>"
+        # Paragraphs are handled in post processing, these control characters
+        # are just used to denote paragraph start and end. They were picked
+        # because they will never be typed in normal text editing.
+        return PARAGRAPH_DELIM + text + PARAGRAPH_DELIM
     
     def heading(self, text, level):
         return "#" * level + " " + text + NEWLINE
@@ -100,7 +108,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         return start + code + "```" + NEWLINE
     
     def block_quote(self, text):
-        return "> " + text
+        return "> " + text.strip()
     
     def block_html(self, html):
         return self.block_code(html, "html")
