@@ -5,7 +5,7 @@ All the renderers that convert markdown to gemini.
 import mistune
 from .unitable import UniTable, ArraySizeError
 
-NEWLINE = "\n"
+NEWLINE = "\r\n"  # I would like to set it to \r\n, but that causes issues for bombadillo, see #150 in that repo
 PARAGRAPH_DELIM = "\x02"  # The marker for paragraph start and end, for post processing
 LINK_DELIM = "\x03"
 
@@ -134,20 +134,25 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         # are just used to denote paragraph start and end. They were picked
         # because they will never be typed in normal text editing.
 
-        # Process footnotes if "paragraph" was set
-        if self.links == "paragraph" and len(self.footnotes) > 0:
-            if text.count("\n") <= 1 and len(self.footnotes) == 1 and text.rstrip().endswith("["+str(self.footnote_num)+"]"):
-                # The whole paragraph is just one line, just the link
-                # So there shouldn't be a footnote
-                ret = PARAGRAPH_DELIM + \
-                    self._gem_link(
-                        self.footnotes[0],
-                        # Remove the footnote part from the text, the [X] at the end
-                        text.rstrip()[:-(len(str(self.footnote_num))+2)],
-                    ) + PARAGRAPH_DELIM
-                self.footnotes = []
-                return ret
+        if self.footnotes_enabled and text.count("\n") <= 1 and len(self.footnotes) > 0 and text.rstrip().endswith("["+str(self.footnote_num)+"]"):
+            # The whole paragraph is just one line, just the link
+            # So there shouldn't be a footnote
+            print("***", text, "***")
+            ret = PARAGRAPH_DELIM + \
+                self._gem_link(
+                    self.footnotes[0],
+                    # Remove the footnote part from the text, the [X] at the end
+                    text.rstrip()[:-(len(str(self.footnote_num))+2)],
+                ) + PARAGRAPH_DELIM
+            # Remove footnote from list
+            self.footnotes.pop()
+            self.footnote_num -= 1
+            if self.links == "paragraph":
+                self.footnotes = []  # Reset them for the next paragraph
+            return ret
 
+        # Process footnotes if "paragraph" was set
+        if self.links == "paragraph":
             ret = PARAGRAPH_DELIM + text + PARAGRAPH_DELIM + PARAGRAPH_DELIM + self._render_footnotes() + PARAGRAPH_DELIM
             self.footnotes = []
             return ret

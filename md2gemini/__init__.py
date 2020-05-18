@@ -78,6 +78,10 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=
         pg += NEWLINE * 2  # Add a blank line between paragraphs
         gemtext = __replace_between(gemtext, PARAGRAPH_DELIM, pg)
 
+    # Process footnotes if at-end was used
+    if links == "at-end":
+        gemtext += NEWLINE + renderer._render_footnotes() + NEWLINE
+
     # Remove double link delims, which are produced by multiple footnotes
     gemtext = gemtext.replace(LINK_DELIM + LINK_DELIM, LINK_DELIM)
     # Remove all the link delims that are next to newlines,
@@ -87,19 +91,20 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=
     gemtext = gemtext.replace(LINK_DELIM, NEWLINE)
 
     # Remove left whitespace in the lines after links
-    gemlines = gemtext.splitlines()[:-1]
+    gemlines = gemtext.splitlines()
+    if gemlines[-1] == "":
+        gemlines = gemlines[:-1]
     pre = False  # Whether we're in a preformatted area or not
+    length = len(gemlines)
     for i, line in enumerate(gemlines):
         # Maintain preformatted state
         if line.startswith("```"):
             pre = not pre
             continue
-        if line.startswith("=>") and not pre:
+        if i+1 < length-1 and line.startswith("=>") and not pre:
             # It's a link, fix the next line by removing left whitespace
             gemlines[i+1] = gemlines[i+1].lstrip()
     gemtext = NEWLINE.join(gemlines)
-
-    # TODO: Process footnotes if at-end was used
 
     return gemtext
 
