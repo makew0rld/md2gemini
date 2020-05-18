@@ -5,7 +5,7 @@ All the renderers that convert markdown to gemini.
 import mistune
 from .unitable import UniTable, ArraySizeError
 
-NEWLINE = "\r\n"
+NEWLINE = "\n"
 PARAGRAPH_DELIM = "\x02"  # The marker for paragraph start and end, for post processing
 LINK_DELIM = "\x03"
 
@@ -16,19 +16,27 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
     def __init__(self, img_tag="[IMG]", indent="  ", ascii_table=False, links="newline"):
         # Disable all the HTML renderer's messing around:
         super().__init__(escape=False, allow_harmful_protocols=True)
-
+        # General
         self.ascii = ascii_table
-        self.links = links
         if indent is None:
             self.indent = "  "
         else:
-
             self.indent = indent
         if img_tag is None:
             img_tag = ""
         self.img_tag = " " + img_tag
+        # Tables
         self.unitable = None
         self.table_cols_align = []  # List of column alignments: ["l", "r", "c"]
+        # Footnote links
+        self.links = links
+        if self.links in ["paragraph", "at-end"]:
+            self.footnotes_enabled = True
+        else:
+            self.footnotes_enabled = False
+        self.footnote_num = 0  # The number of the last footnote is stored here
+        self.footnotes = []  # ["link url", ...] - footnotes per paragraph/document stored here
+
 
     def _gem_link(self, link, text=None):
         # Links are handled in post processing, these control characters
@@ -39,11 +47,32 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
             return LINK_DELIM + "=> " + link.strip() + LINK_DELIM
         return LINK_DELIM + "=> " + link.strip() + " " + text.strip() + LINK_DELIM
 
+    def _add_footnote(self, link, text):
+        self.footnote_num += 1
+        self.footnotes.append(link)
+        return text + "[" + str(self.footnote_num) + "]"
+
+    def _render_footnotes(self):
+        if not self.footnotes_enabled:
+            return ""
+        if self.footnotes == []:
+            return ""
+
+        ret = ""
+        length = len(self.footnotes)
+        for i, url in enumerate(self.footnotes):
+            # Calculate the relative footnote number - there could be five footnotes
+            # for this paragraph, but now 10 in total.
+            # Example footnote, in a client view:
+            # 10: gemini://gus.guru/
+            # Actual footnote output:
+            # => gemini://gus.guru/ 10: gemini://gus.guru/
+            ret += self._gem_link(url, str((self.footnote_num - length) + 1 + i) + ": " + url.strip())
+        return ret
+
     # Inline elements
 
     def text(self, text):
-        """No HTML escaping required."""
-        
         return text
 
     def link(self, link, text=None, title=None):
@@ -54,26 +83,37 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
             if text is None:
                 return link
             return text
+        if self.footnotes_enabled:
+            if text is None or text.strip() == "":
+                # Insert the link inline, but with a footnote too
+                return self._add_footnote(link, link)
+            else:
+                return self._add_footnote(link, text)
+        
         return self._gem_link(link, text)
     
     def image(self, src, alt="", title=None):
         """Turn images into regular Gemini links."""
 
+        if alt is None:
+            alt = ""
+
         if self.links == "off":
-            if alt is None:
+            if alt == "":
                 return src
             return alt
+        if self.footnotes_enabled:
+            return self._add_footnote(src, alt)
+
         return self._gem_link(src, alt.strip() + self.img_tag)
     
     def emphasis(self, text):
-        return text
+        return "*" + text + "*"
     
     def strong(self, text):
-        return text
+        return "**" + text + "**"
     
     def codespan(self, text):
-        """Leave inline code as it was written. Don't turn it into a code block."""
-
         return "`" + text + "`"
     
     def linebreak(self):
@@ -93,6 +133,25 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         # Paragraphs are handled in post processing, these control characters
         # are just used to denote paragraph start and end. They were picked
         # because they will never be typed in normal text editing.
+
+        # Process footnotes if "paragraph" was set
+        if self.links == "paragraph" and len(self.footnotes) > 0:
+            if text.count("\n") <= 1 and len(self.footnotes) == 1 and text.rstrip().endswith("["+str(self.footnote_num)+"]"):
+                # The whole paragraph is just one line, just the link
+                # So there shouldn't be a footnote
+                ret = PARAGRAPH_DELIM + \
+                    self._gem_link(
+                        self.footnotes[0],
+                        # Remove the footnote part from the text, the [X] at the end
+                        text.rstrip()[:-(len(str(self.footnote_num))+2)],
+                    ) + PARAGRAPH_DELIM
+                self.footnotes = []
+                return ret
+
+            ret = PARAGRAPH_DELIM + text + PARAGRAPH_DELIM + PARAGRAPH_DELIM + self._render_footnotes() + PARAGRAPH_DELIM
+            self.footnotes = []
+            return ret
+
         return PARAGRAPH_DELIM + text + PARAGRAPH_DELIM
     
     def heading(self, text, level):
@@ -190,7 +249,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         # Called at the end I think, once all the table elements
         # have been processed
         # Put the table in a preprocessed block
-        return "```table" + NEWLINE + self.unitable.draw() + NEWLINE + "```" + NEWLINE
+        return "```" + NEWLINE + self.unitable.draw() + NEWLINE + "```" + NEWLINE
 
     def table_head(self, text):
         self._init_table()

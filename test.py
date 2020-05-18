@@ -42,10 +42,16 @@ This is another line, it SHOULD be joined with the one above.
 This line should be separate.
 
 It's very easy to make some words **bold** and other words *italic* with Markdown. You can even do [inline](http://google.com) links!
+Another sentence, with [another](gemini://gus.guru/) link.
 
 ![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png) with words after
 
 https://example.com/link/with/no/text
+[Alone link with text](https://example.com/) and text after
+https://example.com/
+some text here.
+
+[Alone link with text, separate](https://example.com)
 
 > block quote here
 
@@ -74,7 +80,7 @@ Table testing:
 Line under a table
 """
 
-out = md2gemini(md, jekyll=True)
+out = md2gemini(md, jekyll=True, links="paragraph")
 print(out, end="")
 
 correct = """# Heading 1
@@ -110,14 +116,22 @@ This is a single line. This is another line, it SHOULD be joined with the one ab
 
 This line should be separate.
 
-It's very easy to make some words bold and other words italic with Markdown. You can even do 
-=> http://google.com inline
-links!
+It's very easy to make some words **bold** and other words *italic* with Markdown. You can even do inline[1] links! Another sentence, with another[2] link.
 
-=> https://octodex.github.com/images/yaktocat.png Image of Yaktocat [IMG]
-with words after
+=> http://google.com 1: http://google.com
+=> gemini://gus.guru/ 2: gemini://gus.guru/
 
-=> https://example.com/link/with/no/text
+Image of Yaktocat[3] with words after
+
+=> https://octodex.github.com/images/yaktocat.png 3: https://octodex.github.com/images/yaktocat.png
+
+https://example.com/link/with/no/text[4] Alone link with text[5] and text after https://example.com/[6] some text here.
+
+=> https://example.com/link/with/no/text 4: https://example.com/link/with/no/text
+=> https://example.com/ 5: https://example.com/
+=> https://example.com/ 6: https://example.com/
+
+=> https://example.com Alone link with text, separate
 
 > block quote here
 
@@ -139,7 +153,7 @@ There should be a long thematic break here
 
 Table testing:
 
-```table
+```
 ┌──────────────┬──────┐
 │     foo      │ bar  │
 ╞══════════════╪══════╡

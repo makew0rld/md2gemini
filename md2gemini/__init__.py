@@ -67,19 +67,17 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=
     gemtext = gem(markdown)
     
     # Post processing
-    #final_gemtext = ""
+
     # Remove newlines within paragraphs, and add two newlines after them.
     while PARAGRAPH_DELIM in gemtext:  # While there's still unprocessed paragraphs
-        try:
-            pg = __text_between(gemtext, PARAGRAPH_DELIM).strip()
-            pg = pg.replace("\r\n", "\n")  # Make all newlines the same
-            pg = pg.replace("\n", " ")  # Get rid of newlines in the same paragraph, like markdown does
-            pg += NEWLINE * 2
-            gemtext = __replace_between(gemtext, PARAGRAPH_DELIM, pg)
-        except IndexError:
-            # No more paragraphs to process
-            break
+        pg = __text_between(gemtext, PARAGRAPH_DELIM).strip()
+        pg = pg.replace("\r\n", "\n")  # Make all newlines the same
+        pg = pg.replace("\n", " ")  # Get rid of newlines in the same paragraph, like markdown does
+        pg += NEWLINE * 2  # Add a blank line between paragraphs
+        gemtext = __replace_between(gemtext, PARAGRAPH_DELIM, pg)
 
+    # Remove double link delims, which are produced by multiple footnotes
+    gemtext = gemtext.replace(LINK_DELIM + LINK_DELIM, LINK_DELIM)
     # Remove all the link delims that are next to newlines,
     # so that when link delims are replaced with newlines later in the code,
     # we don't end up with double newlines.
@@ -98,6 +96,8 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=
             # It's a link, fix the next line by removing left whitespace
             gemlines[i+1] = gemlines[i+1].lstrip()
     gemtext = NEWLINE.join(gemlines)
+
+    # TODO: Process footnotes if at-end was used
 
     return gemtext
 
