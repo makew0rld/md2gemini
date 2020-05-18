@@ -13,15 +13,17 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
     
     #NAME = "gemini"
 
-    def __init__(self, img_tag="[IMG]", indent="  ", ascii_table=False):
+    def __init__(self, img_tag="[IMG]", indent="  ", ascii_table=False, links="newline"):
         # Disable all the HTML renderer's messing around:
         super().__init__(escape=False, allow_harmful_protocols=True)
 
+        self.ascii = ascii_table
+        self.links = links
         if indent is None:
             self.indent = "  "
         else:
+
             self.indent = indent
-        self.ascii = ascii_table
         if img_tag is None:
             img_tag = ""
         self.img_tag = " " + img_tag
@@ -46,14 +48,21 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
 
     def link(self, link, text=None, title=None):
         # title is ignored because it doesn't apply to Gemini
-        # TODO: Support using footnotes instead of putting inline links on their own line
-        return NEWLINE + self._gem_link(link, text)
+
+        if self.links == "off":
+            # Don't link, just leave the text as it was written
+            if text is None:
+                return link
+            return text
+        return self._gem_link(link, text)
     
     def image(self, src, alt="", title=None):
         """Turn images into regular Gemini links."""
 
-        if alt is None or alt == "":
-            return self._gem_link(src)
+        if self.links == "off":
+            if alt is None:
+                return src
+            return alt
         return self._gem_link(src, alt.strip() + self.img_tag)
     
     def emphasis(self, text):
@@ -131,7 +140,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
 
         if start is None:
             start = 1
-        text = text.replace("\r\n", "\n")  # Make sure there's no extra <CR>s
+        text = text.replace("\r\n", "\n")  # Make sure all newlines are the same type
         items = text.split("\n")
         # Remove possible empty strings
         items = [x for x in items if x != ""]

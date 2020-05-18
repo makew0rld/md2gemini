@@ -81,7 +81,3 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=
     jekyll: Skip jekyll frontmatter when processing.
     """
 ```
-
-## Features to add
-- Footnote style links
-  - Right now, inline links are converted to Gemini links, breaking up paragraph flow. It'd be better to have an option that just adds a footnote like `[2]` beside the word, and adds links at the end of the paragraph or document.

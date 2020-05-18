@@ -1,5 +1,4 @@
 from md2gemini import md2gemini, NEWLINE
-from hashlib import sha256
 import sys
 
 md = """---
@@ -45,7 +44,11 @@ This line should be separate.
 It's very easy to make some words **bold** and other words *italic* with Markdown. You can even do [inline](http://google.com) links!
 
 ![Image of Yaktocat](https://octodex.github.com/images/yaktocat.png) with words after
+
+https://example.com/link/with/no/text
+
 > block quote here
+
 Inline `code is right` here.
 
 Code block:
@@ -107,13 +110,14 @@ This is a single line. This is another line, it SHOULD be joined with the one ab
 
 This line should be separate.
 
-It's very easy to make some words bold and other words italic with Markdown. You can even do  
+It's very easy to make some words bold and other words italic with Markdown. You can even do 
 => http://google.com inline
 links!
 
-
 => https://octodex.github.com/images/yaktocat.png Image of Yaktocat [IMG]
 with words after
+
+=> https://example.com/link/with/no/text
 
 > block quote here
 
