@@ -39,7 +39,9 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=
 
     jekyll: Skip jekyll frontmatter when processing.
 
-    links: Set to "off" to turn off links. Any other value will result in links on a newline.
+    links: Set to "off" to turn off links, or "paragraph" to add footnotes and then have the actual
+    links at the end of each paragraph.
+    Any other value will result in links on a newline.
     """
 
     # Pre processing
@@ -127,7 +129,7 @@ def main():
     parser.add_argument("-j", "--jekyll", action="store_true", help="Remove jekyll frontmatter from parsing and output.")
     parser.add_argument("--img-tag", type=str, help="What text to add after image links. Defaults to '[IMG]'.\nWrite something like --img-tag='' to remove it.")
     parser.add_argument("-i", "--indent", type=str, help="The number of spaces to use for list indenting. Put 'tab' to use a tab instead.")
-    parser.add_argument("-l", "--links", type=str, help="Set to \"off\" to turn off links. Not using this flag, or having any other value will result in regular, newline links.")
+    parser.add_argument("-l", "--links", type=str, help="Set to 'off' to turn off links, or 'paragraph' to have footnotes, and the real links at the end of each paragraph. Not using this flag, or having any other value will result in regular, newline links.")
     args = parser.parse_args()
 
     # Validation of command line args

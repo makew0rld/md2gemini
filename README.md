@@ -40,7 +40,7 @@ It works directly in Python, or on the command line. The command line version ca
 
 ### Command line
 ```
-usage: md2gemini [-h] [--version] [-w] [-d DIR] [-a] [-j] [--img-tag IMG_TAG] [-i INDENT] [file [file ...]]
+usage: md2gemini [-h] [--version] [-w] [-d DIR] [-a] [-j] [--img-tag IMG_TAG] [-i INDENT] [-l LINKS] [file [file ...]]
 
 Convert markdown to gemini.
 
@@ -57,6 +57,9 @@ optional arguments:
   --img-tag IMG_TAG     What text to add after image links. Defaults to '[IMG]'. Write something like --img-tag='' to remove it.
   -i INDENT, --indent INDENT
                         The number of spaces to use for list indenting. Put 'tab' to use a tab instead.
+  -l LINKS, --links LINKS
+                        Set to 'off' to turn off links, or 'paragraph' to have footnotes, and the real links at the end of each paragraph. Not using this flag, or having any other value
+                        will result in regular, newline links.
 ```
 
 ### In Python
