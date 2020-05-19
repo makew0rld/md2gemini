@@ -36,6 +36,14 @@ Alternatively,
    1. Item 3a
    1. Item 3b
 
+
+## Level 2
+Line under a heading
+
+## Level 2, again
+
+Line under a heading, with a space
+
 This is a single line.
 This is another line, it SHOULD be joined with the one above.
 

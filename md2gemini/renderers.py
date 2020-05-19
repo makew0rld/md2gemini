@@ -160,7 +160,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         return PARAGRAPH_DELIM + text + PARAGRAPH_DELIM
     
     def heading(self, text, level):
-        return "#" * level + " " + text + NEWLINE
+        return "#" * level + " " + text + NEWLINE*2
     
     def thematic_break(self):
         """80 column split using hyphens."""
