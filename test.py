@@ -1,5 +1,4 @@
-from md2gemini import md2gemini, NEWLINE
-import sys
+from md2gemini import md2gemini
 
 md = """---
 these lines should
@@ -92,5 +91,5 @@ Table testing:
 Line under a table
 """
 
-out = md2gemini(md, jekyll=True, links="paragraph")
+out = md2gemini(md, jekyll=True, links="paragraph", plain=True)
 print(out)

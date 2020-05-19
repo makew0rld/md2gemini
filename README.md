@@ -65,6 +65,8 @@ optional arguments:
                         links at the end of each paragraph, or 'at-end' to have footnotes at the
                         end of the document. Not using this flag, or having any other value will
                         result in regular, newline links.
+  -p, --plain           Remove special markings from output that text/gemini doesn't support, like
+                        the asterisks for bold and italics.
 ```
 
 ### In Python

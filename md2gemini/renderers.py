@@ -13,10 +13,11 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
     
     #NAME = "gemini"
 
-    def __init__(self, img_tag="[IMG]", indent="  ", ascii_table=False, links="newline"):
+    def __init__(self, img_tag="[IMG]", indent="  ", ascii_table=False, links="newline", plain=False):
         # Disable all the HTML renderer's messing around:
         super().__init__(escape=False, allow_harmful_protocols=True)
-        # General
+
+        self.plain = plain
         self.ascii = ascii_table
         if indent is None:
             self.indent = "  "
@@ -108,12 +109,18 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         return self._gem_link(src, alt.strip() + self.img_tag)
     
     def emphasis(self, text):
+        if self.plain:
+            return text
         return "*" + text + "*"
     
     def strong(self, text):
+        if self.plain:
+            return text
         return "**" + text + "**"
     
     def codespan(self, text):
+        if self.plain:
+            return text
         return "`" + text + "`"
     
     def linebreak(self):
