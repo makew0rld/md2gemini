@@ -144,7 +144,6 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         if self.footnotes_enabled and text.count("\n") <= 1 and len(self.footnotes) > 0 and text.rstrip().endswith("["+str(self.footnote_num)+"]"):
             # The whole paragraph is just one line, just the link
             # So there shouldn't be a footnote
-            print("***", text, "***")
             ret = PARAGRAPH_DELIM + \
                 self._gem_link(
                     self.footnotes[0],
