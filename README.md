@@ -45,7 +45,8 @@ usage: md2gemini [-h] [--version] [-w] [-d DIR] [-a] [-j] [--img-tag IMG_TAG] [-
 Convert markdown to gemini.
 
 positional arguments:
-  file                  Files to convert. If no files are specified then data will be read from stdin and printed to stdout.
+  file                  Files to convert. If no files are specified then data will be read from
+                        stdin and printed to stdout.
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -54,12 +55,16 @@ optional arguments:
   -d DIR, --dir DIR     The directory to write files to, if --write is used.
   -a, --ascii-table     Use ASCII to create tables, not Unicode.
   -j, --jekyll          Remove jekyll frontmatter from parsing and output.
-  --img-tag IMG_TAG     What text to add after image links. Defaults to '[IMG]'. Write something like --img-tag='' to remove it.
+  --img-tag IMG_TAG     What text to add after image links. Defaults to '[IMG]'. Write something
+                        like --img-tag='' to remove it.
   -i INDENT, --indent INDENT
-                        The number of spaces to use for list indenting. Put 'tab' to use a tab instead.
+                        The number of spaces to use for list indenting. Put 'tab' to use a
+                        tab instead.
   -l LINKS, --links LINKS
-                        Set to 'off' to turn off links, or 'paragraph' to have footnotes, and the real links at the end of each paragraph. Not using this flag, or having any other value
-                        will result in regular, newline links.
+                        Set to 'off' to turn off links, 'paragraph' to have footnotes and the real
+                        links at the end of each paragraph, or 'at-end' to have footnotes at the
+                        end of the document. Not using this flag, or having any other value will
+                        result in regular, newline links.
 ```
 
 ### In Python
