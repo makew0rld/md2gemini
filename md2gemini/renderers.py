@@ -5,7 +5,7 @@ All the renderers that convert markdown to gemini.
 import mistune
 from .unitable import UniTable, ArraySizeError
 
-NEWLINE = "\r\n"  # I would like to set it to \r\n, but that causes issues for bombadillo, see #150 in that repo
+NEWLINE = "\n"  # I would like to set it to \r\n, but that causes issues for bombadillo, see #150 in that repo`
 PARAGRAPH_DELIM = "\x02"  # The marker for paragraph start and end, for post processing
 LINK_DELIM = "\x03"
 
@@ -152,8 +152,8 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
             return ret
 
         # Process footnotes if "paragraph" was set
-        if self.links == "paragraph":
-            ret = PARAGRAPH_DELIM + text + PARAGRAPH_DELIM + PARAGRAPH_DELIM + self._render_footnotes() + PARAGRAPH_DELIM
+        if self.links == "paragraph" and len(self.footnotes) > 0:
+            ret = PARAGRAPH_DELIM + text + PARAGRAPH_DELIM*2 + self._render_footnotes() + PARAGRAPH_DELIM
             self.footnotes = []
             return ret
 

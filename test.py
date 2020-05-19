@@ -84,5 +84,5 @@ Table testing:
 Line under a table
 """
 
-out = md2gemini(md, jekyll=True, links="at-end")
+out = md2gemini(md, jekyll=True, links="paragraph")
 print(out)
