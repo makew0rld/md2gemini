@@ -9,7 +9,7 @@ Beyond regular Markdown, it supports tables! And converts them into Unicode plai
 ╞══════════════╪══════╡
 │          baz │ bim  │
 ├──────────────┼──────┤
-│ testdfsdfsdf │ yeah │
+│      Testing │ yeah │
 └──────────────┴──────┘
 ```
 or like this for ASCII:
@@ -19,7 +19,7 @@ or like this for ASCII:
 +==============+======+
 |          baz | bim  |
 +--------------+------+
-| testdfsdfsdf | yeah |
+|      Testing | yeah |
 +--------------+------+
 ```
 This means all your GFM tables will still work and look nice.
@@ -30,7 +30,7 @@ Anything else that it doesn't understand will remain the same as when you wrote 
 ```
 pip3 install md2gemini
 ```
-You may also want to use the `--user` flag after install, to only install the package for your user.
+You may also want to use the `--user` flag after `install`, to only install the package for your user.
 
 Note that this package only officially supports Python 3.
 
@@ -79,7 +79,7 @@ with open("example.md", "r") as f:
 ```
 Options for the `md2gemini` function are similar to the command line ones above.
 ```python
-def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=False):
+def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=False, links="newline", plain=False):
     """Convert the provided markdown text to the gemini format.
     
     img_tag: The text added after an image link, to indicate it's an image.
@@ -89,5 +89,12 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=
     ascii_table: Use ASCII to create tables, not Unicode.
 
     jekyll: Skip jekyll frontmatter when processing.
+
+    links: Set to "off" to turn off links, "paragraph" to add footnotes and then have the actual
+    links at the end of each paragraph, or "at-end" to put all the footnotes at the end.
+    Any other value will result in links on a newline.
+
+    plain: Set to True to remove special markings from output that text/gemini doesn't support,
+    like the asterisks for bold and italics.
     """
 ```
