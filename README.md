@@ -54,6 +54,7 @@ optional arguments:
   -w, --write           Write output to a new file of the same name, but with a .gmi extension.
   -d DIR, --dir DIR     The directory to write files to, if --write is used.
   -a, --ascii-table     Use ASCII to create tables, not Unicode.
+  -f, --frontmatter     Remove Jekyll and Zola style front matter before converting.
   -j, --jekyll          Remove jekyll frontmatter from parsing and output.
   --img-tag IMG_TAG     What text to add after image links. Defaults to '[IMG]'. Write something
                         like --img-tag='' to remove it.
@@ -79,7 +80,7 @@ with open("example.md", "r") as f:
 ```
 Options for the `md2gemini` function are similar to the command line ones above.
 ```python
-def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=False, links="newline", plain=False):
+def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontmatter=False, jekyll=False, links="newline", plain=False):
     """Convert the provided markdown text to the gemini format.
     
     img_tag: The text added after an image link, to indicate it's an image.
@@ -88,7 +89,9 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=
     
     ascii_table: Use ASCII to create tables, not Unicode.
 
-    jekyll: Skip jekyll frontmatter when processing.
+    frontmatter: Remove Jekyll and Zola style front matter before converting.
+
+    jekyll: Skip jekyll frontmatter when processing - DEPRECATED.
 
     links: Set to "off" to turn off links, "paragraph" to add footnotes and then have the actual
     links at the end of each paragraph, or "at-end" to put all the footnotes at the end.

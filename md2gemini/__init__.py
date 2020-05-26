@@ -28,7 +28,7 @@ def __replace_between(text, delim, new_text, n=0):
 
 
 
-def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=False, links="newline", plain=False):
+def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontmatter=False, jekyll=False, links="newline", plain=False):
     """Convert the provided markdown text to the gemini format.
     
     img_tag: The text added after an image link, to indicate it's an image.
@@ -37,7 +37,9 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=
     
     ascii_table: Use ASCII to create tables, not Unicode.
 
-    jekyll: Skip jekyll frontmatter when processing.
+    frontmatter: Remove Jekyll and Zola style front matter before converting.
+
+    jekyll: Skip jekyll frontmatter when processing - DEPRECATED.
 
     links: Set to "off" to turn off links, "paragraph" to add footnotes and then have the actual
     links at the end of each paragraph, or "at-end" to put all the footnotes at the end.
@@ -48,22 +50,27 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=
     """
 
     # Pre processing
-    # Remove jekyll frontmatter
-    frontmatter = False
-    if jekyll:
+    # Remove frontmatter
+    frontmatterExists = False
+    if frontmatter:
+        lines = markdown.strip().splitlines()
+        if lines[0] == "---" or lines[0] == "+++":
+            frontmatterExists = True
+    elif jekyll:
         lines = markdown.strip().splitlines()
         if lines[0] == "---":
-            frontmatter = True
+            frontmatterExists = True
     
-    if frontmatter:
+    if frontmatterExists:
         md_lines = []
         for i, line in enumerate(lines[1:]):  # Skip first front matter line
-            if line == "---":
+            if ((frontmatter or jekyll) and line == "---") or (frontmatter and line == "+++"):
                 # End of frontmatter, add all the lines below it
                 md_lines.extend(lines[i+2:])
                 break
         # Turn it back into text
         if md_lines != []:
+            # If md_lines was empty, then effectively no removal would occur, and frontmatter would be processed
             markdown = "\n".join(md_lines)
     
     # Conversion
@@ -115,11 +122,11 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, jekyll=
 
 def __convert_file(file, args):
     if file == sys.stdin:
-        gem = md2gemini(file.read(), img_tag=args.img_tag, indent=args.indent, ascii_table=args.ascii_table, jekyll=args.jekyll, links=args.links, plain=args.plain)
+        gem = md2gemini(file.read(), img_tag=args.img_tag, indent=args.indent, ascii_table=args.ascii_table, frontmatter=args.frontmatter, jekyll=args.jekyll, links=args.links, plain=args.plain)
         print(gem)
     else:
         with open(file, "r") as f:
-            gem = md2gemini(f.read(), img_tag=args.img_tag, indent=args.indent, ascii_table=args.ascii_table, jekyll=args.jekyll, links=args.links, plain=args.plain)
+            gem = md2gemini(f.read(), img_tag=args.img_tag, indent=args.indent, ascii_table=args.ascii_table, frontmatter=args.frontmatter, jekyll=args.jekyll, links=args.links, plain=args.plain)
         if args.write:
             newfile = os.path.splitext(os.path.basename(file))[0] + ".gmi"
             with open(os.path.join(args.dir, newfile), "w") as f:
@@ -134,7 +141,8 @@ def main():
     parser.add_argument("-w", "--write", action="store_true", help="Write output to a new file of the same name, but with a .gmi extension.")
     parser.add_argument("-d", "--dir", help="The directory to write files to, if --write is used.")
     parser.add_argument("-a", "--ascii-table", action="store_true", help="Use ASCII to create tables, not Unicode.")
-    parser.add_argument("-j", "--jekyll", action="store_true", help="Remove jekyll frontmatter from parsing and output.")
+    parser.add_argument("-f", "--frontmatter", action="store_true", help="Remove Jekyll and Zola style front matter before converting.")
+    parser.add_argument("-j", "--jekyll", action="store_true", help="Skip jekyll frontmatter when processing - DEPRECATED.")
     parser.add_argument("--img-tag", type=str, help="What text to add after image links. Defaults to '[IMG]'.\nWrite something like --img-tag='' to remove it.")
     parser.add_argument("-i", "--indent", type=str, help="The number of spaces to use for list indenting. Put 'tab' to use a tab instead.")
     parser.add_argument("-l", "--links", type=str, help="Set to 'off' to turn off links, 'paragraph' to have footnotes and the real links at the end of each paragraph, or 'at-end' to have footnotes at the end of the document. Not using this flag, or having any other value will result in regular, newline links.")

@@ -1,10 +1,10 @@
 from md2gemini import md2gemini
 
-md = """---
+md = """+++
 these lines should
 not appear
 
----
++++
 
 # Heading 1
 ## Heading 2
@@ -91,5 +91,5 @@ Table testing:
 Line under a table
 """
 
-out = md2gemini(md, jekyll=True, links="paragraph", plain=True)
+out = md2gemini(md, frontmatter=True, links="paragraph", plain=True)
 print(out)
