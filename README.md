@@ -2,6 +2,8 @@
 
 Converter from Markdown to the [Gemini](https://gemini.circumlunar.space/) text format. It works as a Python module, or a command line application.
 
+One of its key features is that it can convert inline links into footnotes - at the end of each paragraph, or all together at the end of the document.
+
 Beyond regular Markdown, it supports tables! And converts them into Unicode plaintext tables like this:
 ```
 ┌──────────────┬──────┐
