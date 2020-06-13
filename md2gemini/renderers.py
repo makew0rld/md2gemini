@@ -103,8 +103,8 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
             if alt == "":
                 return src
             return alt
-        if self.footnotes_enabled:
-            return self._add_footnote(src, alt)
+        
+        # Images shouldn't need footnotes, so it's just added as a link no matter what
 
         return self._gem_link(src, alt.strip() + self.img_tag)
     

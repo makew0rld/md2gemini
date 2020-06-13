@@ -163,6 +163,8 @@ def main():
         except ValueError:
             print("Invalid indent value. Must be an integer, or 'tab'.", file=sys.stderr)
             sys.exit(1)
+    if args.img_tag is None:
+        args.img_tag = "[IMG]"
 
     # If there aren't any files then read from stdin
     if args.file == []:
