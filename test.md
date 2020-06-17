@@ -81,6 +81,13 @@ another line of it
 there should be three spaces above
 ```
 
+> block quote test, in it's own paragraph.
+
+<center>  <!-- I know, that's not how you usually do it :) -->
+<img src="https://raw.githubusercontent.com/sahib/brig/master/docs/logo.png" alt="a brig" width="50%">
+</center>
+
+
 There should be a long thematic break here
 
 ---
@@ -92,3 +99,5 @@ Table testing:
 |          baz |  bim  |
 | testdfsdfsdf | yeah  |
 Line under a table
+
+Words with inline <strong>bold</strong> html.

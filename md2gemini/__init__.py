@@ -28,7 +28,7 @@ def __replace_between(text, delim, new_text, n=0):
 
 
 
-def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontmatter=False, jekyll=False, links="newline", plain=False):
+def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontmatter=False, jekyll=False, links="newline", plain=False, strip_html=False):
     """Convert the provided markdown text to the gemini format.
     
     img_tag: The text added after an image link, to indicate it's an image.
@@ -46,7 +46,9 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
     Any other value will result in links on a newline.
 
     plain: Set to True to remove special markings from output that text/gemini doesn't support,
-    like the asterisks for bold and italics.
+    like the asterisks for bold and italics, as well as inline HTML.
+
+    strip_html: Strip all inline and block HTML from Markdown.
     """
 
     # Pre processing
@@ -74,7 +76,7 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
             markdown = "\n".join(md_lines)
     
     # Conversion
-    renderer = GeminiRenderer(img_tag=img_tag, indent=indent, ascii_table=ascii_table, links=links, plain=plain)
+    renderer = GeminiRenderer(img_tag=img_tag, indent=indent, ascii_table=ascii_table, links=links, plain=plain, strip_html=strip_html)
     gem = mistune.create_markdown(escape=False, renderer=renderer, plugins=["table", "url"])
     gemtext = gem(markdown)
     
@@ -122,11 +124,11 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
 
 def __convert_file(file, args):
     if file == sys.stdin:
-        gem = md2gemini(file.read(), img_tag=args.img_tag, indent=args.indent, ascii_table=args.ascii_table, frontmatter=args.frontmatter, jekyll=args.jekyll, links=args.links, plain=args.plain)
+        gem = md2gemini(file.read(), img_tag=args.img_tag, indent=args.indent, ascii_table=args.ascii_table, frontmatter=args.frontmatter, jekyll=args.jekyll, links=args.links, plain=args.plain, strip_html=args.strip_html)
         print(gem)
     else:
         with open(file, "r") as f:
-            gem = md2gemini(f.read(), img_tag=args.img_tag, indent=args.indent, ascii_table=args.ascii_table, frontmatter=args.frontmatter, jekyll=args.jekyll, links=args.links, plain=args.plain)
+            gem = md2gemini(f.read(), img_tag=args.img_tag, indent=args.indent, ascii_table=args.ascii_table, frontmatter=args.frontmatter, jekyll=args.jekyll, links=args.links, plain=args.plain, strip_html=args.strip_html)
         if args.write:
             newfile = os.path.splitext(os.path.basename(file))[0] + ".gmi"
             with open(os.path.join(args.dir, newfile), "w") as f:
@@ -146,7 +148,8 @@ def main():
     parser.add_argument("--img-tag", type=str, help="What text to add after image links. Defaults to '[IMG]'.\nWrite something like --img-tag='' to remove it.")
     parser.add_argument("-i", "--indent", type=str, help="The number of spaces to use for list indenting. Put 'tab' to use a tab instead.")
     parser.add_argument("-l", "--links", type=str, help="Set to 'off' to turn off links, 'paragraph' to have footnotes and the real links at the end of each paragraph, or 'at-end' to have footnotes at the end of the document. Not using this flag, or having any other value will result in regular, newline links.")
-    parser.add_argument("-p", "--plain", action="store_true", help="Remove special markings from output that text/gemini doesn't support, like the asterisks for bold and italics.")
+    parser.add_argument("-p", "--plain", action="store_true", help="Remove special markings from output that text/gemini doesn't support, like the asterisks for bold and italics, and inline HTML")
+    parser.add_argument("--strip-html", action="store_true", help="Strip all inline and block HTML from Markdown. Note that using --plain will strip inline HTML as well.")
     args = parser.parse_args()
 
     # Validation of command line args

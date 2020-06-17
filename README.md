@@ -69,7 +69,10 @@ optional arguments:
                         end of the document. Not using this flag, or having any other value will
                         result in regular, newline links.
   -p, --plain           Remove special markings from output that text/gemini doesn't support, like
-                        the asterisks for bold and italics.
+                        the asterisks for bold and italics, and inline HTML
+  --strip-html          Strip all inline and block HTML from Markdown. Note that using --plain will
+                        strip inline HTML as well.
+
 ```
 
 ### In Python
@@ -100,6 +103,8 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
     Any other value will result in links on a newline.
 
     plain: Set to True to remove special markings from output that text/gemini doesn't support,
-    like the asterisks for bold and italics.
+    like the asterisks for bold and italics, as well as inline HTML.
+
+    strip_html: Strip all inline and block HTML from Markdown.
     """
 ```

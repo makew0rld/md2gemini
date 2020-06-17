@@ -13,11 +13,12 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
     
     #NAME = "gemini"
 
-    def __init__(self, img_tag="[IMG]", indent="  ", ascii_table=False, links="newline", plain=False):
+    def __init__(self, img_tag="[IMG]", indent="  ", ascii_table=False, links="newline", plain=False, strip_html=False):
         # Disable all the HTML renderer's messing around:
         super().__init__(escape=False, allow_harmful_protocols=True)
 
         self.plain = plain
+        self.strip_html = strip_html
         self.ascii = ascii_table
         if indent is None:
             self.indent = "  "
@@ -132,6 +133,8 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         return ""
     
     def inline_html(self, html):
+        if self.plain or self.strip_html:
+            return ""
         return html
 
     # Block level elements
@@ -184,12 +187,17 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         start = "```" + NEWLINE
         if not info is None:
             start = "```" + info + NEWLINE
-        return start + code + "```" + NEWLINE
+        
+        if code.endswith("\n"):
+            return start + code + "```" + NEWLINE*2
+        return start + code + "\n```" + NEWLINE*2
     
     def block_quote(self, text):
-        return "> " + text.strip()
+        return "> " + text.strip() + NEWLINE
     
     def block_html(self, html):
+        if self.strip_html:
+            return NEWLINE
         return self.block_code(html, "html")
     
     def block_error(self, html):
