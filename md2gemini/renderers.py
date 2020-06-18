@@ -80,6 +80,12 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
     def link(self, link, text=None, title=None):
         # title is ignored because it doesn't apply to Gemini
 
+        if link.startswith("#"):
+            # Invalid for Gemini
+            if text is None:
+                return link
+            return text
+
         if self.links == "off":
             # Don't link, just leave the text as it was written
             if text is None:

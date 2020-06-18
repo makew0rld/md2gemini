@@ -86,9 +86,7 @@ Text right above quote
 > block quote test, in it's own paragraph.
 Text under blockquote
 
-There should be a long thematic break here
-
----
+Link to other part of document right [here](#heading-2)
 
 Table testing:
 
