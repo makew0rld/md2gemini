@@ -13,10 +13,16 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
     
     #NAME = "gemini"
 
-    def __init__(self, img_tag="[IMG]", indent="  ", ascii_table=False, links="newline", plain=False, strip_html=False):
+    def __init__(self, img_tag="[IMG]", indent="  ", ascii_table=False, links="newline", plain=False,
+                 strip_html=False, base_url=""):
         # Disable all the HTML renderer's messing around:
         super().__init__(escape=False, allow_harmful_protocols=True)
 
+        if base_url is None:
+            base_url = ""
+        if len(base_url) > 0 and base_url[-1] == "/":
+            base_url = base_url[:-1]
+        self.base_url = base_url
         self.plain = plain
         self.strip_html = strip_html
         self.ascii = ascii_table
@@ -44,6 +50,10 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         # Links are handled in post processing, these control characters
         # are just used to denote paragraph start and end. They were picked
         # because they will never be typed in normal text editing.
+
+        link = link.strip()
+        if link.startswith("/"):
+            link = self.base_url + link
 
         if text is None:
             return LINK_DELIM + "=> " + link.strip() + LINK_DELIM

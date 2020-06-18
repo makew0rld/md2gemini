@@ -70,8 +70,10 @@ optional arguments:
                         result in regular, newline links.
   -p, --plain           Remove special markings from output that text/gemini doesn't support, like
                         the asterisks for bold and italics, and inline HTML
-  --strip-html          Strip all inline and block HTML from Markdown. Note that using --plain will
+  -s, --strip-html      Strip all inline and block HTML from Markdown. Note that using --plain will
                         strip inline HTML as well.
+  -b BASE_URL, --base-url BASE_URL
+                        All links starting with a slash will have this URL prepended to them.
 
 ```
 
@@ -106,5 +108,7 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
     like the asterisks for bold and italics, as well as inline HTML.
 
     strip_html: Strip all inline and block HTML from Markdown.
+
+    base_url: All links starting with a slash will have this URL prepended to them.
     """
 ```

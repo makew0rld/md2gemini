@@ -88,6 +88,8 @@ Text under blockquote
 
 Link to other part of document right [here](#heading-2)
 
+Root relative link [here](/test/foo.gmi)
+
 Table testing:
 
 |          foo |  bar  |
