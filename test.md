@@ -90,6 +90,8 @@ Link to other part of document right [here](#heading-2)
 
 Root relative link [here](/test/foo.gmi)
 
+Markdown link [here](example.md)
+
 Table testing:
 
 |          foo |  bar  |

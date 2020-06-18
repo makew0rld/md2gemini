@@ -27,7 +27,7 @@ def __replace_between(text, delim, new_text, n=0):
 
 
 def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontmatter=False, jekyll=False,
-              links="newline", plain=False, strip_html=False, base_url=""):
+              links="newline", plain=False, strip_html=False, base_url="", md_links=False):
     """Convert the provided markdown text to the gemini format.
     
     img_tag: The text added after an image link, to indicate it's an image.
@@ -50,6 +50,8 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
     strip_html: Strip all inline and block HTML from Markdown.
 
     base_url: All links starting with a slash will have this URL prepended to them.
+
+    md_links: Convert all links to local files ending in .md to end with .gmi instead.
     """
 
     # Pre processing
@@ -78,7 +80,7 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
     
     # Conversion
     renderer = GeminiRenderer(img_tag=img_tag, indent=indent, ascii_table=ascii_table, links=links,
-                              plain=plain, strip_html=strip_html, base_url=base_url)
+                              plain=plain, strip_html=strip_html, base_url=base_url, md_links=md_links)
     gem = mistune.create_markdown(escape=False, renderer=renderer, plugins=["table", "url"])
     gemtext = gem(markdown)
     
@@ -128,13 +130,13 @@ def __convert_file(file, args):
     if file == sys.stdin:
         gem = md2gemini(file.read(), img_tag=args.img_tag, indent=args.indent, ascii_table=args.ascii_table,
                         frontmatter=args.frontmatter, jekyll=args.jekyll, links=args.links, plain=args.plain,
-                        strip_html=args.strip_html, base_url=args.base_url)
+                        strip_html=args.strip_html, base_url=args.base_url, md_links=args.md_links)
         print(gem)
     else:
         with open(file, "r") as f:
             gem = md2gemini(f.read(), img_tag=args.img_tag, indent=args.indent, ascii_table=args.ascii_table,
                             frontmatter=args.frontmatter, jekyll=args.jekyll, links=args.links, plain=args.plain,
-                            strip_html=args.strip_html, base_url=args.base_url)
+                            strip_html=args.strip_html, base_url=args.base_url, md_links=args.md_links)
         if args.write:
             newfile = os.path.splitext(os.path.basename(file))[0] + ".gmi"
             with open(os.path.join(args.dir, newfile), "w") as f:
@@ -157,6 +159,7 @@ def main():
     parser.add_argument("-p", "--plain", action="store_true", help="Remove special markings from output that text/gemini doesn't support, like the asterisks for bold and italics, and inline HTML")
     parser.add_argument("-s", "--strip-html", action="store_true", help="Strip all inline and block HTML from Markdown. Note that using --plain will strip inline HTML as well.")
     parser.add_argument("-b", "--base-url", type=str, help="All links starting with a slash will have this URL prepended to them.")
+    parser.add_argument("-m", "--md-links", action="store_true", help="Convert all links to local files ending in .md to end with .gmi instead.")
     args = parser.parse_args()
 
     # Validation of command line args

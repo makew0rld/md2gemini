@@ -74,6 +74,7 @@ optional arguments:
                         strip inline HTML as well.
   -b BASE_URL, --base-url BASE_URL
                         All links starting with a slash will have this URL prepended to them.
+  -m, --md-links        Convert all links to local files ending in .md to end with .gmi instead.
 
 ```
 
@@ -110,5 +111,7 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
     strip_html: Strip all inline and block HTML from Markdown.
 
     base_url: All links starting with a slash will have this URL prepended to them.
+
+    md_links: Convert all links to local files ending in .md to end with .gmi instead.
     """
 ```

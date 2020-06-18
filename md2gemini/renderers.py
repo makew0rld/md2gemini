@@ -14,10 +14,11 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
     #NAME = "gemini"
 
     def __init__(self, img_tag="[IMG]", indent="  ", ascii_table=False, links="newline", plain=False,
-                 strip_html=False, base_url=""):
+                 strip_html=False, base_url="", md_links=False):
         # Disable all the HTML renderer's messing around:
         super().__init__(escape=False, allow_harmful_protocols=True)
 
+        self.md_links = md_links
         if base_url is None:
             base_url = ""
         if len(base_url) > 0 and base_url[-1] == "/":
@@ -95,12 +96,16 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
             if text is None:
                 return link
             return text
-
         if self.links == "off":
             # Don't link, just leave the text as it was written
             if text is None:
                 return link
             return text
+        
+        if link.endswith(".md") and self.md_links and "//" not in link:
+            # Relative link, and md -> gmi conversion is enabled
+            link = link[:-2] + "gmi"
+
         if self.footnotes_enabled:
             if text is None or text.strip() == "":
                 # Insert the link inline, but with a footnote too
