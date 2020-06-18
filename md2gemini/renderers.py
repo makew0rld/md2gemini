@@ -193,7 +193,13 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         return start + code + "\n```" + NEWLINE*2
     
     def block_quote(self, text):
-        return "> " + text.strip() + NEWLINE
+        """Add a quote mark to the beginning of each line."""
+
+        lines = text.replace(PARAGRAPH_DELIM, "\n").strip().split("\n")
+        ret = ""
+        for line in lines:
+            ret += "> " + line.strip() + NEWLINE
+        return ret
     
     def block_html(self, html):
         if self.strip_html:

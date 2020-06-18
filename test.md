@@ -81,12 +81,10 @@ another line of it
 there should be three spaces above
 ```
 
+Text above blockquote
+Text right above quote
 > block quote test, in it's own paragraph.
-
-<center>  <!-- I know, that's not how you usually do it :) -->
-<img src="https://raw.githubusercontent.com/sahib/brig/master/docs/logo.png" alt="a brig" width="50%">
-</center>
-
+Text under blockquote
 
 There should be a long thematic break here
 
