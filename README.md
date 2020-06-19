@@ -1,5 +1,8 @@
 # md2gemini
 
+[![PyPI downloads](https://img.shields.io/pypi/dw/md2gemini)](https://pypi.org/project/md2gemini)
+[![License image](https://img.shields.io/github/license/makeworld-the-better-one/md2gemini)](https://www.gnu.org/licenses/lgpl-3.0.en.html)
+
 Converter from Markdown to the [Gemini](https://gemini.circumlunar.space/) text format. It works as a Python module, or a command line application.
 
 One of its key features is that it can convert inline links into footnotes - at the end of each paragraph, or all together at the end of the document.
