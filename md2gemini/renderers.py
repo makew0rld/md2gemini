@@ -5,7 +5,7 @@ All the renderers that convert markdown to gemini.
 import mistune
 from .unitable import UniTable, ArraySizeError
 
-NEWLINE = "\n"  # I would like to set it to \r\n, but that causes issues for bombadillo, see #150 in that repo`
+NEWLINE = "\r\n"  # For Windows support
 PARAGRAPH_DELIM = "\x02"  # The marker for paragraph start and end, for post processing
 LINK_DELIM = "\x03"
 
@@ -211,12 +211,12 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         
         if code.endswith("\n"):
             return start + code + "```" + NEWLINE*2
-        return start + code + "\n```" + NEWLINE*2
+        return start + code + NEWLINE + "```" + NEWLINE*2
     
     def block_quote(self, text):
         """Add a quote mark to the beginning of each line."""
 
-        lines = text.replace(PARAGRAPH_DELIM, "\n").strip().split("\n")
+        lines = text.replace(PARAGRAPH_DELIM, "\n").strip().splitlines()
         ret = ""
         for line in lines:
             ret += "> " + line.strip() + NEWLINE
@@ -245,8 +245,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
 
         if start is None:
             start = 1
-        text = text.replace("\r\n", "\n")  # Make sure all newlines are the same type
-        items = text.split("\n")
+        items = text.splitlines()
         # Remove possible empty strings
         items = [x for x in items if x != ""]
         ret_items = []
@@ -302,7 +301,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         # The table_cell func splits each column using newlines
         try:
             self.unitable.header(
-                text.split("\n")[:-1]
+                text.split("\n")[:-1]  # \n is used to delimit cells internally
             )
         except ArraySizeError:
             #raise Exception("Malformed table")
@@ -320,7 +319,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         try:
             self.unitable.add_row(
                 # The table_cell func splits each column using newlines
-                text.split("\n")[:-1]
+                text.split("\n")[:-1]  # \n is used to delimit cells internally
             )
         except ArraySizeError:
             #raise Exception("Malformed table")

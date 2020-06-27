@@ -76,7 +76,7 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
         # Turn it back into text
         if md_lines != []:
             # If md_lines was empty, then effectively no removal would occur, and frontmatter would be processed
-            markdown = "\n".join(md_lines)
+            markdown = NEWLINE.join(md_lines)
     
     # Conversion
     renderer = GeminiRenderer(img_tag=img_tag, indent=indent, ascii_table=ascii_table, links=links,
@@ -121,6 +121,7 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
             # It's a link, fix the next line by removing left whitespace
             gemlines[i+1] = gemlines[i+1].lstrip()
     gemtext = NEWLINE.join(gemlines)
+    gemtext = gemtext.rstrip()
 
     return gemtext
 
