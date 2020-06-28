@@ -198,4 +198,4 @@ def main():
 
 
 __all__ = ["GeminiRenderer", "md2gemini", "main", "NEWLINE", "__version__"]
-__version__ = "1.5.1"
+__version__ = "1.6.0"
