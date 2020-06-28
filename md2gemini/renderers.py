@@ -166,7 +166,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         # are just used to denote paragraph start and end. They were picked
         # because they will never be typed in normal text editing.
 
-        if self.footnotes_enabled and text.count("\n") <= 1 and len(self.footnotes) > 0 and text.rstrip().endswith("["+str(self.footnote_num)+"]"):
+        if self.links == "paragraph" and self.footnotes_enabled and text.count("\n") <= 1 and len(self.footnotes) == 1 and text.rstrip().endswith("["+str(self.footnote_num)+"]"):
             # The whole paragraph is just one line, just the link
             # So there shouldn't be a footnote
             ret = PARAGRAPH_DELIM + \
@@ -178,8 +178,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
             # Remove footnote from list
             self.footnotes.pop()
             self.footnote_num -= 1
-            if self.links == "paragraph":
-                self.footnotes = []  # Reset them for the next paragraph
+            self.footnotes = []  # Reset them for the next paragraph
             return ret
 
         # Process footnotes if "paragraph" was set
