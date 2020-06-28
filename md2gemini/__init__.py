@@ -1,5 +1,5 @@
 import mistune
-from .renderers import GeminiRenderer, NEWLINE, PARAGRAPH_DELIM, LINK_DELIM
+from .renderers import GeminiRenderer, NEWLINE, PARAGRAPH_DELIM, LINK_DELIM, LINEBREAK
 import argparse
 import sys
 import os
@@ -93,6 +93,9 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
         pg = pg.replace("\n", " ")  # Get rid of newlines in the same paragraph, like markdown does
         pg += NEWLINE * 2  # Add a blank line between paragraphs
         gemtext = __replace_between(gemtext, PARAGRAPH_DELIM, pg)
+
+    # Add in hard linebreaks
+    gemtext = gemtext.replace(LINEBREAK, NEWLINE)
 
     # Process footnotes if at-end was used
     if links == "at-end":

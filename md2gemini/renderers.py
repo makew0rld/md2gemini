@@ -8,6 +8,7 @@ from .unitable import UniTable, ArraySizeError
 NEWLINE = "\r\n"  # For Windows support
 PARAGRAPH_DELIM = "\x02"  # The marker for paragraph start and end, for post processing
 LINK_DELIM = "\x03"
+LINEBREAK = "\x01"  # Represents a hard linebreak that should not be changed
 
 class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be used but this isn't available
     
@@ -147,7 +148,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
     
     def linebreak(self):
         #return "<LB>"
-        return NEWLINE
+        return LINEBREAK
     
     def newline(self):        
         #return "<NL>"
