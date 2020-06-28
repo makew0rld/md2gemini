@@ -5,31 +5,94 @@
 
 Converter from Markdown to the [Gemini](https://gemini.circumlunar.space/) text format. It works as a Python module, or a command line application.
 
-One of its key features is that it can convert inline links into footnotes - at the end of each paragraph, or all together at the end of the document.
-
-Beyond regular Markdown, it supports tables! And converts them into Unicode plaintext tables like this:
-```
-┌──────────────┬──────┐
-│     foo      │ bar  │
-╞══════════════╪══════╡
-│          baz │ bim  │
-├──────────────┼──────┤
-│      Testing │ yeah │
-└──────────────┴──────┘
-```
-or like this for ASCII:
-```
-+--------------+------+
-|     foo      | bar  |
-+==============+======+
-|          baz | bim  |
-+--------------+------+
-|      Testing | yeah |
-+--------------+------+
-```
-This means all your GFM tables will still work and look nice.
+One of its key features is that it can convert inline links into footnotes. It also supports tables, and will convert them into Unicode (or ASCII) tables.
 
 Anything else that it doesn't understand will remain the same as when you wrote it, like strikethrough for example.
+
+## Link modes
+
+md2gemini has several link modes, because text/gemini doesn't support inline links. These modes can be set by passing different strings to the `-l` or `--links` flags on the command line, or the `links=` argument in Python.
+
+Here is some example markdown, to show what each link mode does:
+```markdown
+This is a paragraph with an [inline](https://example.com) link.
+Here is [another](https://example.org/) link, part of the same paragraph.
+
+This is a second paragraph, with a different [link](https://duck.com) in it.
+```
+
+Link modes:
+
+### default
+This is what happens when don't specify what link mode you want, or put any invalid string. It is also called "newline" mode. It is likely the worst link mode for reading.
+
+Output:
+```
+This is a paragraph with an
+=> https://example.com inline
+link.
+Here is
+=> https://example.org/ another
+link, part of the same paragraph.
+
+This is a second paragraph, with a different
+=> https://duck.com link
+in it.
+```
+
+### off
+This will remove all links.
+
+Output:
+```
+This is a paragraph with an inline link. Here is another link, part of the same paragraph.
+
+This is a second paragraph, with a different link in it.
+```
+
+### paragraph
+This will result in footnotes being added to the document, and the links for each footnote being added at the end of each paragraph.
+
+Output:
+```
+This is a paragraph with an inline[1] link. Here is another[2] link, part of the same paragraph.
+
+=> https://example.com 1: https://example.com
+=> https://example.org/ 2: https://example.org/
+
+This is a second paragraph, with a different link[3] in it.
+
+=> https://duck.com 3: https://duck.com
+```
+
+### at-end
+This is the same as **paragraph**, but all the links for the footnotes are added at the very end of the document.
+
+Output:
+```
+This is a paragraph with an inline[1] link. Here is another[2] link, part of the same paragraph.
+
+This is a second paragraph, with a different link[3] in it.
+
+=> https://example.com 1: https://example.com
+=> https://example.org/ 2: https://example.org/
+=> https://duck.com 3: https://duck.com
+```
+
+### copy
+This link mode doesn't add any footnotes inside the paragraph, but creates a link with the inline link text at the end of the paragraph. [Here's](https://user-images.githubusercontent.com/25111343/85186965-0b0e8580-b26a-11ea-8cb7-aa22ca6745af.png) a screenshot showing what this mode ends up looking like - using my [Amfora](https://github.com/makeworld-the-better-one/amfora) browser.
+
+Output:
+```
+This is a paragraph with an inline link. Here is another link, part of the same paragraph.
+
+=> https://example.com inline
+=> https://example.org/ another
+
+This is a second paragraph, with a different link in it.
+
+=> https://duck.com link
+```
 
 ## Installation
 ```
@@ -67,10 +130,11 @@ optional arguments:
                         The number of spaces to use for list indenting. Put 'tab' to use a
                         tab instead.
   -l LINKS, --links LINKS
-                        Set to 'off' to turn off links, 'paragraph' to have footnotes and the real
-                        links at the end of each paragraph, or 'at-end' to have footnotes at the
-                        end of the document. Not using this flag, or having any other value will
-                        result in regular, newline links.
+                        Set to 'off' to turn off links, 'paragraph' to have footnotes at the end
+                        of each paragraph, or 'at-end' to have footnotes at the end of the document.
+                        You can also set it to 'copy' to put links that copy the inline link text after
+                        each paragraph. Not using this flag, or having any other value will result in
+                        regular, newline links.
   -p, --plain           Remove special markings from output that text/gemini doesn't support, like
                         the asterisks for bold and italics, and inline HTML
   -s, --strip-html      Strip all inline and block HTML from Markdown. Note that using --plain will
@@ -104,9 +168,10 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
 
     jekyll: Skip jekyll frontmatter when processing - DEPRECATED.
 
-    links: Set to "off" to turn off links, "paragraph" to add footnotes and then have the actual
-    links at the end of each paragraph, or "at-end" to put all the footnotes at the end.
-    Any other value will result in links on a newline.
+    links: Set to 'off' to turn off links, 'paragraph' to have footnotes at the end of each
+    paragraph, or 'at-end' to have footnotes at the end of the document. You can also set it
+    to 'copy' to put links that copy the inline link text after each paragraph. Not using this
+    flag, or having any other value will result in regular, newline links.
 
     plain: Set to True to remove special markings from output that text/gemini doesn't support,
     like the asterisks for bold and italics, as well as inline HTML.

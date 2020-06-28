@@ -67,8 +67,6 @@ some text here.
 
 Another [inline](https://exampledd.com) test link afterward.
 
-> block quote here
-
 Inline `code is right` here.
 
 Code block:

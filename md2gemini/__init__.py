@@ -40,9 +40,10 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
 
     jekyll: Skip jekyll frontmatter when processing - DEPRECATED.
 
-    links: Set to "off" to turn off links, "paragraph" to add footnotes and then have the actual
-    links at the end of each paragraph, or "at-end" to put all the footnotes at the end.
-    Any other value will result in links on a newline.
+    links: Set to 'off' to turn off links, 'paragraph' to have footnotes at the end of each
+    paragraph, or 'at-end' to have footnotes at the end of the document. You can also set it
+    to 'copy' to put links that copy the inline link text after each paragraph. Not using this
+    flag, or having any other value will result in regular, newline links.
 
     plain: Set to True to remove special markings from output that text/gemini doesn't support,
     like the asterisks for bold and italics, as well as inline HTML.
@@ -159,7 +160,7 @@ def main():
     parser.add_argument("-j", "--jekyll", action="store_true", help="Skip jekyll frontmatter when processing - DEPRECATED.")
     parser.add_argument("--img-tag", type=str, help="What text to add after image links. Defaults to '[IMG]'.\nWrite something like --img-tag='' to remove it.")
     parser.add_argument("-i", "--indent", type=str, help="The number of spaces to use for list indenting. Put 'tab' to use a tab instead.")
-    parser.add_argument("-l", "--links", type=str, help="Set to 'off' to turn off links, 'paragraph' to have footnotes and the real links at the end of each paragraph, or 'at-end' to have footnotes at the end of the document. Not using this flag, or having any other value will result in regular, newline links.")
+    parser.add_argument("-l", "--links", type=str, help="Set to 'off' to turn off links, 'paragraph' to have footnotes at the end of each paragraph, or 'at-end' to have footnotes at the end of the document. You can also set it to 'copy' to put links that copy the inline link text after each paragraph. Not using this flag, or having any other value will result in regular, newline links.")
     parser.add_argument("-p", "--plain", action="store_true", help="Remove special markings from output that text/gemini doesn't support, like the asterisks for bold and italics, and inline HTML")
     parser.add_argument("-s", "--strip-html", action="store_true", help="Strip all inline and block HTML from Markdown. Note that using --plain will strip inline HTML as well.")
     parser.add_argument("-b", "--base-url", type=str, help="All links starting with a slash will have this URL prepended to them.")

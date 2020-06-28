@@ -40,12 +40,13 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         self.table_cols_align = []  # List of column alignments: ["l", "r", "c"]
         # Footnote links
         self.links = links
-        if self.links in ["paragraph", "at-end"]:
+        if self.links in ["paragraph", "at-end", "copy"]:
             self.footnotes_enabled = True
         else:
             self.footnotes_enabled = False
         self.footnote_num = 0  # The number of the last footnote is stored here
-        self.footnotes = []  # ["link url", ...] - footnotes per paragraph/document stored here
+        self.footnotes = []  # ["https://example.com/", ...] - footnotes per paragraph/document stored here
+        self.footnote_texts = [] # ["link text", ...] - used for links "copy" mode, when link text also needs to be stored
 
 
     def _gem_link(self, link, text=None):
@@ -64,6 +65,10 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
     def _add_footnote(self, link, text):
         self.footnote_num += 1
         self.footnotes.append(link)
+
+        if self.links == "copy":
+            self.footnote_texts.append(text)
+            return text
         return text + "[" + str(self.footnote_num) + "]"
 
     def _render_footnotes(self):
@@ -74,14 +79,24 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
 
         ret = ""
         length = len(self.footnotes)
-        for i, url in enumerate(self.footnotes):
-            # Calculate the relative footnote number - there could be five footnotes
-            # for this paragraph, but now 10 in total.
-            # Example footnote, in a client view:
-            # 10: gemini://gus.guru/
-            # Actual footnote output:
-            # => gemini://gus.guru/ 10: gemini://gus.guru/
-            ret += self._gem_link(url, str((self.footnote_num - length) + 1 + i) + ": " + url.strip())
+        if self.links == "copy":
+            for i, url in enumerate(self.footnotes):
+                # Calculate the relative footnote number - there could be five footnotes
+                # for this paragraph, but now 10 in total.
+
+                # Example footnote, in a client view:
+                # copied link text
+                # Actual footnote output:
+                # => gemini://gus.guru/ copied link text
+                ret += self._gem_link(url, self.footnote_texts[i])
+        else:
+            for i, url in enumerate(self.footnotes):
+                # Example footnote, in a client view:
+                # 10: gemini://gus.guru/
+                # Actual footnote output:
+                # => gemini://gus.guru/ 10: gemini://gus.guru/
+                ret += self._gem_link(url, str((self.footnote_num - length) + 1 + i) + ": " + url.strip())
+        
         return ret
 
     # Inline elements
@@ -181,10 +196,18 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
             self.footnotes = []  # Reset them for the next paragraph
             return ret
 
-        # Process footnotes if "paragraph" was set
-        if self.links == "paragraph" and len(self.footnotes) > 0:
+        if self.links == "copy" and len(self.footnotes) == 1 and self.footnote_texts[0] == text:
+            # The whole paragraph is just one big link, so it should just be added as a link
+            ret = PARAGRAPH_DELIM + self._gem_link(self.footnotes[0], text) + PARAGRAPH_DELIM
+            self.footnotes = []
+            self.footnote_texts = []
+            return ret
+
+        # Process footnotes if it should
+        if self.links in ["paragraph", "copy"] and len(self.footnotes) > 0:
             ret = PARAGRAPH_DELIM + text + PARAGRAPH_DELIM*2 + self._render_footnotes() + PARAGRAPH_DELIM
             self.footnotes = []
+            self.footnote_texts = []  # For self.links == "copy"
             return ret
 
         return PARAGRAPH_DELIM + text + PARAGRAPH_DELIM
