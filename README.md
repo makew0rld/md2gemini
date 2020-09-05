@@ -155,7 +155,8 @@ with open("example.md", "r") as f:
 ```
 Options for the `md2gemini` function are similar to the command line ones above.
 ```python
-def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontmatter=False, jekyll=False, links="newline", plain=False):
+def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontmatter=False, jekyll=False,
+              links="newline", plain=False, strip_html=False, base_url="", md_links=False):
     """Convert the provided markdown text to the gemini format.
     
     img_tag: The text added after an image link, to indicate it's an image.

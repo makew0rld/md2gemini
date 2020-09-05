@@ -125,7 +125,7 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
             # It's a link, fix the next line by removing left whitespace
             gemlines[i+1] = gemlines[i+1].lstrip()
     gemtext = NEWLINE.join(gemlines)
-    gemtext = gemtext.rstrip()
+    gemtext = gemtext.rstrip().lstrip("\r\n")
 
     return gemtext
 
