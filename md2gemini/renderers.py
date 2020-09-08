@@ -14,8 +14,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
     
     #NAME = "gemini"
 
-    def __init__(self, img_tag="[IMG]", indent="  ", ascii_table=False, links="newline", plain=False,
-                 strip_html=False, base_url="", md_links=False):
+    def __init__(self, code_tag="", img_tag="[IMG]", indent=" ", ascii_table=False, links="newline", plain=False, strip_html=False, base_url="", md_links=False, table_tag="table"):
         # Disable all the HTML renderer's messing around:
         super().__init__(escape=False, allow_harmful_protocols=True)
 
@@ -32,9 +31,15 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
             self.indent = "  "
         else:
             self.indent = indent
+        if code_tag is None:
+            code_tag = ""
+        self.code_tag = code_tag
         if img_tag is None:
             img_tag = ""
         self.img_tag = " " + img_tag
+        if table_tag is None:
+            table_tag = "table"
+        self.table_tag = table_tag
         # Tables
         self.unitable = None
         self.table_cols_align = []  # List of column alignments: ["l", "r", "c"]
@@ -228,7 +233,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
     def block_code(self, code, info=None):
         # Gemini doesn't support code block infos, but it doesn't matter
         # Adding them might make this more compatible
-        start = "```" + NEWLINE
+        start = "```" + self.code_tag + NEWLINE
         if not info is None:
             start = "```" + info + NEWLINE
         
@@ -319,7 +324,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         # Called at the end I think, once all the table elements
         # have been processed
         # Put the table in a preprocessed block
-        return "```table" + NEWLINE + self.unitable.draw() + NEWLINE + "```" + NEWLINE
+        return "```" + self.table_tag + NEWLINE + self.unitable.draw() + NEWLINE + "```" + NEWLINE
 
     def table_head(self, text):
         self._init_table()

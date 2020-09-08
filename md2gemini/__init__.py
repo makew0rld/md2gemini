@@ -26,10 +26,13 @@ def __replace_between(text, delim, new_text, n=0):
     return start + new_text + end
 
 
-def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontmatter=False, jekyll=False,
-              links="newline", plain=False, strip_html=False, base_url="", md_links=False):
+def md2gemini(markdown, code_tag="", img_tag="[IMG]", indent=" ",
+              ascii_table=False, frontmatter=False, jekyll=False,
+              links="newline", plain=False, strip_html=False,
+              base_url="", md_links=False, table_tag="table"):
     """Convert the provided markdown text to the gemini format.
-    
+    code_tag: The default alt text for code blocks.
+
     img_tag: The text added after an image link, to indicate it's an image.
     
     indent: How much to indent sub-levels of a list. Put several spaces, or \\t for a tab.
@@ -53,6 +56,8 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
     base_url: All links starting with a slash will have this URL prepended to them.
 
     md_links: Convert all links to local files ending in .md to end with .gmi instead.
+
+    table_tag: "The default alt text for table blocks."
     """
 
     # Pre processing
@@ -80,8 +85,12 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
             markdown = NEWLINE.join(md_lines)
     
     # Conversion
-    renderer = GeminiRenderer(img_tag=img_tag, indent=indent, ascii_table=ascii_table, links=links,
-                              plain=plain, strip_html=strip_html, base_url=base_url, md_links=md_links)
+    renderer = GeminiRenderer(code_tag=code_tag, img_tag=img_tag,
+                              indent=indent, ascii_table=ascii_table,
+                              links=links, plain=plain,
+                              strip_html=strip_html,
+                              base_url=base_url, md_links=md_links,
+                              table_tag=table_tag)
     gem = mistune.create_markdown(escape=False, renderer=renderer, plugins=["table", "url"])
     gemtext = gem(markdown)
     
@@ -133,15 +142,28 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
 
 def __convert_file(file, args):
     if file == sys.stdin:
-        gem = md2gemini(file.read(), img_tag=args.img_tag, indent=args.indent, ascii_table=args.ascii_table,
-                        frontmatter=args.frontmatter, jekyll=args.jekyll, links=args.links, plain=args.plain,
-                        strip_html=args.strip_html, base_url=args.base_url, md_links=args.md_links)
+        gem = md2gemini(file.read(), code_tag=args.code_tag,
+                        img_tag=args.img_tag, indent=args.indent,
+                        ascii_table=args.ascii_table,
+                        frontmatter=args.frontmatter,
+                        jekyll=args.jekyll, links=args.links,
+                        plain=args.plain, strip_html=args.strip_html,
+                        base_url=args.base_url,
+                        md_links=args.md_links,
+                        table_tag=args.table_tag)
         print(gem)
     else:
         with open(file, "r") as f:
-            gem = md2gemini(f.read(), img_tag=args.img_tag, indent=args.indent, ascii_table=args.ascii_table,
-                            frontmatter=args.frontmatter, jekyll=args.jekyll, links=args.links, plain=args.plain,
-                            strip_html=args.strip_html, base_url=args.base_url, md_links=args.md_links)
+            gem = md2gemini(f.read(), code_tag=args.code_tag,
+                            img_tag=args.img_tag, indent=args.indent,
+                            ascii_table=args.ascii_table,
+                            frontmatter=args.frontmatter,
+                            jekyll=args.jekyll, links=args.links,
+                            plain=args.plain,
+                            strip_html=args.strip_html,
+                            base_url=args.base_url,
+                            md_links=args.md_links,
+                            table_tag=args.table_tag)
         if args.write:
             newfile = os.path.splitext(os.path.basename(file))[0] + ".gmi"
             with open(os.path.join(args.dir, newfile), "w") as f:
@@ -158,7 +180,9 @@ def main():
     parser.add_argument("-a", "--ascii-table", action="store_true", help="Use ASCII to create tables, not Unicode.")
     parser.add_argument("-f", "--frontmatter", action="store_true", help="Remove Jekyll and Zola style front matter before converting.")
     parser.add_argument("-j", "--jekyll", action="store_true", help="Skip jekyll frontmatter when processing - DEPRECATED.")
+    parser.add_argument("--code-tag", type=str, help="What alt text to add to unlabeled code blocks. Defaults to empty string.")
     parser.add_argument("--img-tag", type=str, help="What text to add after image links. Defaults to '[IMG]'.\nWrite something like --img-tag='' to remove it.")
+    parser.add_argument("--table-tag", type=str, help="What alt text to add to table blocks. Defaults to 'table'.\nWrite something like --table-tag='' to remove it.")
     parser.add_argument("-i", "--indent", type=str, help="The number of spaces to use for list indenting. Put 'tab' to use a tab instead.")
     parser.add_argument("-l", "--links", type=str, help="Set to 'off' to turn off links, 'paragraph' to have footnotes at the end of each paragraph, or 'at-end' to have footnotes at the end of the document. You can also set it to 'copy' to put links that copy the inline link text after each paragraph. Not using this flag, or having any other value will result in regular, newline links.")
     parser.add_argument("-p", "--plain", action="store_true", help="Remove special markings from output that text/gemini doesn't support, like the asterisks for bold and italics, and inline HTML")
@@ -181,8 +205,14 @@ def main():
         except ValueError:
             print("Invalid indent value. Must be an integer, or 'tab'.", file=sys.stderr)
             sys.exit(1)
+    if args.code_tag is None:
+        args.code_tag = ""
+
     if args.img_tag is None:
         args.img_tag = "[IMG]"
+
+    if args.table_tag is None:
+        args.table_tag = "table"
 
     # If there aren't any files then read from stdin
     if args.file == []:

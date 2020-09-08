@@ -108,40 +108,58 @@ It works directly in Python, or on the command line. The command line version ca
 
 ### Command line
 ```
-usage: md2gemini [-h] [--version] [-w] [-d DIR] [-a] [-j] [--img-tag IMG_TAG] [-i INDENT] [-l LINKS] [file [file ...]]
+usage: md2gemini [-h] [--version] [-w] [-d DIR] [-a] [-f] [-j]
+                 [--code-tag CODE_TAG] [--img-tag IMG_TAG]
+                 [--table-tag TABLE_TAG] [-i INDENT] [-l LINKS] [-p] [-s]
+                 [-b BASE_URL] [-m]
+                 [file [file ...]]
 
 Convert markdown to gemini.
 
 positional arguments:
-  file                  Files to convert. If no files are specified then data will be read from
-                        stdin and printed to stdout.
+  file                  Files to convert. If no files are specified then data
+                        will be read from stdin and printed to stdout.
 
 optional arguments:
   -h, --help            show this help message and exit
   --version             show program's version number and exit
-  -w, --write           Write output to a new file of the same name, but with a .gmi extension.
+  -w, --write           Write output to a new file of the same name, but with
+                        a .gmi extension.
   -d DIR, --dir DIR     The directory to write files to, if --write is used.
   -a, --ascii-table     Use ASCII to create tables, not Unicode.
-  -f, --frontmatter     Remove Jekyll and Zola style front matter before converting.
-  -j, --jekyll          Remove jekyll frontmatter from parsing and output.
-  --img-tag IMG_TAG     What text to add after image links. Defaults to '[IMG]'. Write something
-                        like --img-tag='' to remove it.
+  -f, --frontmatter     Remove Jekyll and Zola style front matter before
+                        converting.
+  -j, --jekyll          Skip jekyll frontmatter when processing - DEPRECATED.
+  --code-tag CODE_TAG   What alt text to add to unlabeled code blocks.
+                        Defaults to empty string.
+  --img-tag IMG_TAG     What text to add after image links. Defaults to
+                        '[IMG]'. Write something like --img-tag='' to remove
+                        it.
+  --table-tag TABLE_TAG
+                        What alt text to add to table blocks. Defaults to
+                        'table'. Write something like --table-tag='' to remove
+                        it.
   -i INDENT, --indent INDENT
-                        The number of spaces to use for list indenting. Put 'tab' to use a
-                        tab instead.
+                        The number of spaces to use for list indenting. Put
+                        'tab' to use a tab instead.
   -l LINKS, --links LINKS
-                        Set to 'off' to turn off links, 'paragraph' to have footnotes at the end
-                        of each paragraph, or 'at-end' to have footnotes at the end of the document.
-                        You can also set it to 'copy' to put links that copy the inline link text after
-                        each paragraph. Not using this flag, or having any other value will result in
+                        Set to 'off' to turn off links, 'paragraph' to have
+                        footnotes at the end of each paragraph, or 'at-end' to
+                        have footnotes at the end of the document. You can
+                        also set it to 'copy' to put links that copy the
+                        inline link text after each paragraph. Not using this
+                        flag, or having any other value will result in
                         regular, newline links.
-  -p, --plain           Remove special markings from output that text/gemini doesn't support, like
-                        the asterisks for bold and italics, and inline HTML
-  -s, --strip-html      Strip all inline and block HTML from Markdown. Note that using --plain will
-                        strip inline HTML as well.
+  -p, --plain           Remove special markings from output that text/gemini
+                        doesn't support, like the asterisks for bold and
+                        italics, and inline HTML
+  -s, --strip-html      Strip all inline and block HTML from Markdown. Note
+                        that using --plain will strip inline HTML as well.
   -b BASE_URL, --base-url BASE_URL
-                        All links starting with a slash will have this URL prepended to them.
-  -m, --md-links        Convert all links to local files ending in .md to end with .gmi instead.
+                        All links starting with a slash will have this URL
+                        prepended to them.
+  -m, --md-links        Convert all links to local files ending in .md to end
+                        with .gmi instead.
 
 ```
 
@@ -155,10 +173,13 @@ with open("example.md", "r") as f:
 ```
 Options for the `md2gemini` function are similar to the command line ones above.
 ```python
-def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontmatter=False, jekyll=False,
-              links="newline", plain=False, strip_html=False, base_url="", md_links=False):
+def md2gemini(markdown, code_tag="", img_tag="[IMG]", indent=" ",
+              ascii_table=False, frontmatter=False, jekyll=False,
+              links="newline", plain=False, strip_html=False,
+              base_url="", md_links=False, table_tag="table"):
     """Convert the provided markdown text to the gemini format.
-    
+    code_tag: The default alt text for code blocks.
+
     img_tag: The text added after an image link, to indicate it's an image.
     
     indent: How much to indent sub-levels of a list. Put several spaces, or \\t for a tab.
@@ -182,5 +203,7 @@ def md2gemini(markdown, img_tag="[IMG]", indent="  ", ascii_table=False, frontma
     base_url: All links starting with a slash will have this URL prepended to them.
 
     md_links: Convert all links to local files ending in .md to end with .gmi instead.
+
+    table_tag: "The default alt text for table blocks."
     """
 ```
