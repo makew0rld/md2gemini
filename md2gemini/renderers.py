@@ -233,7 +233,9 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
             start = "```" + info + NEWLINE
         
         if code.endswith("\n"):
-            return start + code + "```" + NEWLINE*2
+            code = code[:-1]
+        if code.endswith("\n"):
+            code = code[:-1]
         return start + code + NEWLINE + "```" + NEWLINE*2
     
     def block_quote(self, text):
