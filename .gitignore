@@ -1,3 +1,5 @@
+# Patch output
+*.orig
 
 # Created by https://www.gitignore.io/api/code,linux,python
 # Edit at https://www.gitignore.io/?templates=code,linux,python
