@@ -34,12 +34,13 @@ def test_empty_img_tag_with_text():
 
 @multiple_tags
 def table_tag(request):
-    md = """a|b|c
+    md = """
+a|b|c
 -|-|
 1|2|3
 4|5|6
-"""
-    gem = f"""```{request.param}
+""".lstrip()
+    gem = "```" + request.param + """
 ┌───┬───┬───┐
 │ a │ b │ c │
 ╞═══╪═══╪═══╡
