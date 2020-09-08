@@ -317,7 +317,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         # Called at the end I think, once all the table elements
         # have been processed
         # Put the table in a preprocessed block
-        return "```table" + NEWLINE + self.unitable.draw() + NEWLINE + "```" + NEWLINE
+        return "```" + NEWLINE + self.unitable.draw() + NEWLINE + "```" + NEWLINE
 
     def table_head(self, text):
         self._init_table()
