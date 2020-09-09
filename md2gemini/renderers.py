@@ -10,11 +10,26 @@ PARAGRAPH_DELIM = "\x02"  # The marker for paragraph start and end, for post pro
 LINK_DELIM = "\x03"
 LINEBREAK = "\x01"  # Represents a hard linebreak that should not be changed
 
-class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be used but this isn't available
-    
-    #NAME = "gemini"
 
-    def __init__(self, code_tag="", img_tag="[IMG]", indent=" ", ascii_table=False, links="newline", plain=False, strip_html=False, base_url="", md_links=False, table_tag="table"):
+class GeminiRenderer(
+    mistune.HTMLRenderer
+):  # Actually BaseRenderer should be used but this isn't available
+
+    # NAME = "gemini"
+
+    def __init__(
+        self,
+        code_tag="",
+        img_tag="[IMG]",
+        indent=" ",
+        ascii_table=False,
+        links="newline",
+        plain=False,
+        strip_html=False,
+        base_url="",
+        md_links=False,
+        table_tag="table",
+    ):
         # Disable all the HTML renderer's messing around:
         super().__init__(escape=False, allow_harmful_protocols=True)
 
@@ -50,9 +65,12 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         else:
             self.footnotes_enabled = False
         self.footnote_num = 0  # The number of the last footnote is stored here
-        self.footnotes = []  # ["https://example.com/", ...] - footnotes per paragraph/document stored here
-        self.footnote_texts = [] # ["link text", ...] - used for links "copy" mode, when link text also needs to be stored
-
+        self.footnotes = (
+            []
+        )  # ["https://example.com/", ...] - footnotes per paragraph/document stored here
+        self.footnote_texts = (
+            []
+        )  # ["link text", ...] - used for links "copy" mode, when link text also needs to be stored
 
     def _gem_link(self, link, text=None):
         # Links are handled in post processing, these control characters
@@ -100,8 +118,10 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
                 # 10: gemini://gus.guru/
                 # Actual footnote output:
                 # => gemini://gus.guru/ 10: gemini://gus.guru/
-                ret += self._gem_link(url, str((self.footnote_num - length) + 1 + i) + ": " + url.strip())
-        
+                ret += self._gem_link(
+                    url, str((self.footnote_num - length) + 1 + i) + ": " + url.strip()
+                )
+
         return ret
 
     # Inline elements
@@ -122,7 +142,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
             if text is None:
                 return link
             return text
-        
+
         if link.endswith(".md") and self.md_links and "//" not in link:
             # Relative link, and md -> gmi conversion is enabled
             link = link[:-2] + "gmi"
@@ -133,9 +153,9 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
                 return self._add_footnote(link, link)
             else:
                 return self._add_footnote(link, text)
-        
+
         return self._gem_link(link, text)
-    
+
     def image(self, src, alt="", title=None):
         """Turn images into regular Gemini links."""
 
@@ -146,34 +166,34 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
             if alt == "":
                 return src
             return alt
-        
+
         # Images shouldn't need footnotes, so it's just added as a link no matter what
 
         return self._gem_link(src, alt.strip() + self.img_tag)
-    
+
     def emphasis(self, text):
         if self.plain:
             return text
         return "*" + text + "*"
-    
+
     def strong(self, text):
         if self.plain:
             return text
         return "**" + text + "**"
-    
+
     def codespan(self, text):
         if self.plain:
             return text
         return "`" + text + "`"
-    
+
     def linebreak(self):
-        #return "<LB>"
+        # return "<LB>"
         return LINEBREAK
-    
-    def newline(self):        
-        #return "<NL>"
+
+    def newline(self):
+        # return "<NL>"
         return ""
-    
+
     def inline_html(self, html):
         if self.plain or self.strip_html:
             return ""
@@ -186,63 +206,86 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         # are just used to denote paragraph start and end. They were picked
         # because they will never be typed in normal text editing.
 
-        if self.links == "paragraph" and self.footnotes_enabled and text.count("\n") <= 1 and len(self.footnotes) == 1 and text.rstrip().endswith("["+str(self.footnote_num)+"]"):
+        if (
+            self.links == "paragraph"
+            and self.footnotes_enabled
+            and text.count("\n") <= 1
+            and len(self.footnotes) == 1
+            and text.rstrip().endswith("[" + str(self.footnote_num) + "]")
+        ):
             # The whole paragraph is just one line, just the link
             # So there shouldn't be a footnote
-            ret = PARAGRAPH_DELIM + \
-                self._gem_link(
+            ret = (
+                PARAGRAPH_DELIM
+                + self._gem_link(
                     self.footnotes[0],
                     # Remove the footnote part from the text, the [X] at the end
-                    text.rstrip()[:-(len(str(self.footnote_num))+2)],
-                ) + PARAGRAPH_DELIM
+                    text.rstrip()[: -(len(str(self.footnote_num)) + 2)],
+                )
+                + PARAGRAPH_DELIM
+            )
             # Remove footnote from list
             self.footnotes.pop()
             self.footnote_num -= 1
             self.footnotes = []  # Reset them for the next paragraph
             return ret
 
-        if self.links == "copy" and len(self.footnotes) == 1 and self.footnote_texts[0] == text:
+        if (
+            self.links == "copy"
+            and len(self.footnotes) == 1
+            and self.footnote_texts[0] == text
+        ):
             # The whole paragraph is just one big link, so it should just be added as a link
-            ret = PARAGRAPH_DELIM + self._gem_link(self.footnotes[0], text) + PARAGRAPH_DELIM
+            ret = (
+                PARAGRAPH_DELIM
+                + self._gem_link(self.footnotes[0], text)
+                + PARAGRAPH_DELIM
+            )
             self.footnotes = []
             self.footnote_texts = []
             return ret
 
         # Process footnotes if it should
         if self.links in ["paragraph", "copy"] and len(self.footnotes) > 0:
-            ret = PARAGRAPH_DELIM + text + PARAGRAPH_DELIM*2 + self._render_footnotes() + PARAGRAPH_DELIM
+            ret = (
+                PARAGRAPH_DELIM
+                + text
+                + PARAGRAPH_DELIM * 2
+                + self._render_footnotes()
+                + PARAGRAPH_DELIM
+            )
             self.footnotes = []
             self.footnote_texts = []  # For self.links == "copy"
             return ret
 
         return PARAGRAPH_DELIM + text + PARAGRAPH_DELIM
-    
+
     def heading(self, text, level):
-        return "#" * level + " " + text + NEWLINE*2
-    
+        return "#" * level + " " + text + NEWLINE * 2
+
     def thematic_break(self):
         """80 column split using hyphens."""
 
         return "-" * 80 + NEWLINE * 2
-    
+
     def block_text(self, text):
         # Idk what this is, it's not defined in the CommonMark spec,
         # and the HTML renderer also just returns text
         return text + NEWLINE
-    
+
     def block_code(self, code, info=None):
         # Gemini doesn't support code block infos, but it doesn't matter
         # Adding them might make this more compatible
         start = "```" + self.code_tag + NEWLINE
         if not info is None:
             start = "```" + info + NEWLINE
-        
+
         if code.endswith("\n"):
             code = code[:-1]
         if code.endswith("\n"):
             code = code[:-1]
-        return start + code + NEWLINE + "```" + NEWLINE*2
-    
+        return start + code + NEWLINE + "```" + NEWLINE * 2
+
     def block_quote(self, text):
         """Add a quote mark to the beginning of each line."""
 
@@ -251,15 +294,15 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         for line in lines:
             ret += "> " + line.strip() + NEWLINE
         return ret
-    
+
     def block_html(self, html):
         if self.strip_html:
             return NEWLINE
         return self.block_code(html, "html")
-    
+
     def block_error(self, html):
         return self.block_code(html, "html")
-    
+
     def list_item(self, text, level):
         # No modifications, the func below handles that
         return text + NEWLINE
@@ -270,7 +313,7 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         This uses indenting to do sub-levels.
         Ordered list items just use 1. 2. etc, as plain text.
         """
-        
+
         # First level of list means `level = 1`
 
         if start is None:
@@ -293,9 +336,11 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
                     # in that second list.
                     ret_items.append(item)
                 else:
-                    ret_items.append(self.indent * (level-1) + str(i+start) + ". " + item.strip())
+                    ret_items.append(
+                        self.indent * (level - 1) + str(i + start) + ". " + item.strip()
+                    )
 
-        else:   
+        else:
             # Return an unordered list using the official Gemini list character: *
             # Indenting is used for sub-levels
             for item in items:
@@ -303,8 +348,8 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
                     # See the comment above for why this check is required.
                     ret_items.append(item)
                 else:
-                    ret_items.append(self.indent * (level-1) + "* " + item.strip())
-        
+                    ret_items.append(self.indent * (level - 1) + "* " + item.strip())
+
         return NEWLINE.join(ret_items) + NEWLINE * 2
 
     # Elements that rely on plugins:
@@ -324,7 +369,15 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
         # Called at the end I think, once all the table elements
         # have been processed
         # Put the table in a preprocessed block
-        return "```" + self.table_tag + NEWLINE + self.unitable.draw() + NEWLINE + "```" + NEWLINE
+        return (
+            "```"
+            + self.table_tag
+            + NEWLINE
+            + self.unitable.draw()
+            + NEWLINE
+            + "```"
+            + NEWLINE
+        )
 
     def table_head(self, text):
         self._init_table()
@@ -334,14 +387,14 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
                 text.split("\n")[:-1]  # \n is used to delimit cells internally
             )
         except ArraySizeError:
-            #raise Exception("Malformed table")
+            # raise Exception("Malformed table")
             pass
         # Set and clear the alignment data, now that the number of columns should be known
         self.unitable.set_cols_align(self.table_cols_align)
         self.unitable.set_cols_valign(["m"] * len(self.table_cols_align))
         self.table_cols_align = []
         return text
-    
+
     def table_body(self, text):
         return ""
 
@@ -352,19 +405,21 @@ class GeminiRenderer(mistune.HTMLRenderer):  # Actually BaseRenderer should be u
                 text.split("\n")[:-1]  # \n is used to delimit cells internally
             )
         except ArraySizeError:
-            #raise Exception("Malformed table")
+            # raise Exception("Malformed table")
             pass
         self.table_cols_align = []
         # The text processing is done in other funcs
         return text
-    
+
     def table_cell(self, text, align=None, is_head=False):
         if align in ["left", "right", "center"]:
             self.table_cols_align.append(align[0])  # l, r, or c
         else:
             # If align is None or something unknown happened
             self.table_cols_align.append("l")
-        return text.strip() + "\n"  # \n is used to separate cells from each other in other funcs
+        return (
+            text.strip() + "\n"
+        )  # \n is used to separate cells from each other in other funcs
 
     # Strikethough can't be supported
     # Footnotes aren't supported right now

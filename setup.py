@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="md2gemini", # Replace with your own username
+    name="md2gemini",  # Replace with your own username
     version=__version__,
     author="makeworld",
     author_email="example@example.com",
@@ -22,15 +22,7 @@ setuptools.setup(
         "Topic :: Text Processing :: General",
         "Topic :: Text Processing :: Markup",
     ],
-    python_requires='>=3.5',
-    install_requires=[
-        "mistune>=2.0.0a4,<3",
-        "cjkwrap",
-        "wcwidth",
-    ],
-    entry_points={
-        "console_scripts": [
-            "md2gemini = md2gemini:main"
-        ]
-    }
+    python_requires=">=3.5",
+    install_requires=["mistune>=2.0.0a4,<3", "cjkwrap", "wcwidth",],
+    entry_points={"console_scripts": ["md2gemini = md2gemini:main"]},
 )
