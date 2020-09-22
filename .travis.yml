@@ -6,6 +6,8 @@ python:
   - "3.8"
 
 cache: pip
+
+before_script: black --check --exclude 'unitable\.py' .
 script: pytest
 
 notifications:

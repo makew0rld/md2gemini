@@ -1,4 +1,7 @@
-pytest>=6.0.1,<7
 mistune>=2.0.0a4,<3
 cjkwrap
 wcwidth
+
+# Includes testing/dev deps too:
+pytest>=6.0.1,<7
+black
