@@ -23,6 +23,10 @@ setuptools.setup(
         "Topic :: Text Processing :: Markup",
     ],
     python_requires=">=3.5",
-    install_requires=["mistune>=2.0.0a4,<3", "cjkwrap", "wcwidth",],
+    install_requires=[
+        "mistune>=2.0.0a4,<3",
+        "cjkwrap",
+        "wcwidth",
+    ],
     entry_points={"console_scripts": ["md2gemini = md2gemini:main"]},
 )

@@ -8,7 +8,7 @@ import re
 
 def __text_between(text, delim, n=0):
     """Get the text between two delimeters.
-    
+
     n: Which occurence of the delimeter pair to act on, zero-indexed.
     """
 
@@ -17,7 +17,7 @@ def __text_between(text, delim, n=0):
 
 def __replace_between(text, delim, new_text, n=0):
     """Replace the text between two delimeters, and get the full text back.
-    
+
     n: Which occurence of the delimeter pair to act on, zero-indexed.
     """
 
@@ -46,9 +46,9 @@ def md2gemini(
     code_tag: The default alt text for code blocks.
 
     img_tag: The text added after an image link, to indicate it's an image.
-    
+
     indent: How much to indent sub-levels of a list. Put several spaces, or \\t for a tab.
-    
+
     ascii_table: Use ASCII to create tables, not Unicode.
 
     frontmatter: Remove Jekyll and Zola style front matter before converting.
