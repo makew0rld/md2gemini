@@ -4,4 +4,4 @@ wcwidth
 
 # Includes testing/dev deps too:
 pytest>=6.0.1,<7
-black
+black; python_version >= "3.6"

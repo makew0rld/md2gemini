@@ -7,7 +7,7 @@ python:
 
 cache: pip
 
-before_script: black --check --exclude 'unitable\.py' .
+before_script: if [[ $TRAVIS_PYTHON_VERSION != 3.5 ]]; then black --check --exclude 'unitable\.py' .; fi
 script: pytest
 
 notifications:
