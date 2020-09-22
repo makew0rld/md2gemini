@@ -1,5 +1,6 @@
 from .util import normalize
 from md2gemini import md2gemini
+import pytest
 
 
 def f(md):
@@ -12,34 +13,15 @@ def test_normal_list():
     assert f(md) == gem
 
 
-def test_list_with_newline_and_no_space():
-    md = "- hello\nworld\n- oh"
+@pytest.fixture(params=[2, 3, 4, 5, 6])
+def list_with_newline_and_spaces(request):
+    md = "- hello\n" + (" " * request.param) + "world\n- oh"
     gem = "* hello world\n* oh"
     assert f(md) == gem
 
 
-def test_list_with_newline_and_one_space():
-    md = "- hello\n world\n- oh"
-    gem = "* hello world\n* oh"
-    assert f(md) == gem
-
-
-def test_list_with_newline_and_two_spaces():
-    md = "- hello\n  world\n- oh"
-    gem = "* hello world\n* oh"
-    assert f(md) == gem
-
-
-def test_list_with_newline_and_three_spaces():
-    md = "- hello\n   bright\n   world\n- oh"
-    gem = "* hello bright world\n* oh"
-    assert f(md) == gem
-
-
-def test_list_with_newline_and_four_spaces():
-    md = "- hello\n    world\n- oh"
-    gem = "* hello world\n* oh"
-    assert f(md) == gem
+def test_list_with_newline_and_spaces(list_with_newline_and_spaces):
+    pass
 
 
 def test_separate_lists():
