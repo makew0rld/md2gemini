@@ -5,6 +5,8 @@ All the renderers that convert markdown to gemini.
 import mistune
 from .unitable import UniTable, ArraySizeError
 
+from functools import reduce
+
 NEWLINE = "\r\n"  # For Windows support
 PARAGRAPH_DELIM = "\x02"  # The marker for paragraph start and end, for post processing
 LINK_DELIM = "\x03"
@@ -304,7 +306,13 @@ class GeminiRenderer(
         return self.block_code(html, "html")
 
     def list_item(self, text, level):
-        # No modifications, the func below handles that
+        # It is necessary to split the text on newline, since markdown
+        # allows for list items to be split across multiple lines.
+        # We need to strip whitespace from these items and add it ourselves,
+        # since the text doesn't guarantee any particular formatting for
+        # these items.
+        items = [item.strip() for item in text.splitlines()]
+        text = reduce(lambda x, y: x + " " + y, items)
         return text + NEWLINE
 
     def list(self, text, ordered, level, start=None):
@@ -318,9 +326,9 @@ class GeminiRenderer(
 
         if start is None:
             start = 1
+        # Any empty lines should have been consumed by list_item,
+        # so no need to check for empty lines here.
         items = text.splitlines()
-        # Remove possible empty strings
-        items = [x for x in items if x != ""]
         ret_items = []
 
         if ordered:
