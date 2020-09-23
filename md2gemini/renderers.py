@@ -3,9 +3,9 @@ All the renderers that convert markdown to gemini.
 """
 
 import mistune
+import functools
 from .unitable import UniTable, ArraySizeError
 
-from functools import reduce
 
 NEWLINE = "\r\n"  # For Windows support
 PARAGRAPH_DELIM = "\x02"  # The marker for paragraph start and end, for post processing
@@ -312,7 +312,7 @@ class GeminiRenderer(
         # since the text doesn't guarantee any particular formatting for
         # these items.
         items = [item.strip() for item in text.splitlines()]
-        text = reduce(lambda x, y: x + " " + y, items)
+        text = functools.reduce(lambda x, y: x + " " + y, items)
         return text + NEWLINE
 
     def list(self, text, ordered, level, start=None):
