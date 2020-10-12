@@ -27,6 +27,17 @@ def test_img_tag_with_text(img_tag_with_text):
     pass
 
 
+@multiple_tags
+def img_tag_with_text_in_link(request):
+    md = "[![text](image.jpg)](example.com)"
+    gem = "=> example.com text\n=> image.jpg text " + request.param
+    assert normalize(md2gemini(md, img_tag=request.param, links="copy")) == gem
+
+
+def test_img_tag_with_text_in_link(img_tag_with_text_in_link):
+    pass
+
+
 def test_empty_img_tag_no_text():
     md = "![](image.jpg)"
     gem = "=> image.jpg"
