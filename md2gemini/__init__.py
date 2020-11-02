@@ -72,6 +72,9 @@ def md2gemini(
     table_tag: "The default alt text for table blocks."
     """
 
+    if len(markdown) == 0:
+        return ""
+
     # Pre processing
     # Remove frontmatter
     frontmatterExists = False

@@ -6,6 +6,12 @@ def f(md):
     return normalize(md2gemini(md, plain=True))
 
 
+def test_empty_input():
+    md = ""
+    gem = ""
+    assert f(md) == gem
+
+
 def test_remove_bold():
     md = "Sentence with **bold** in it."
     gem = "Sentence with bold in it."
