@@ -30,14 +30,14 @@ class GeminiRenderer(
         strip_html=False,
         base_url="",
         md_links=False,
-        rellink_func=None,
+        link_func=None,
         table_tag="table",
     ):
         # Disable all the HTML renderer's messing around:
         super().__init__(escape=False, allow_harmful_protocols=True)
 
         self.md_links = md_links
-        self.rellink_func = rellink_func
+        self.link_func = link_func
         if base_url is None:
             base_url = ""
         if len(base_url) > 0 and base_url[-1] == "/":
@@ -147,14 +147,13 @@ class GeminiRenderer(
                 return link
             return text
 
-        if "//" not in link:
-            # Relative link
-            if link.endswith(".md") and self.md_links:
-                # md -> gmi conversion is enabled
-                link = link[:-2] + "gmi"
-            elif self.rellink_func:
-                # A custom function to treat relative links is provided
-                link = self.rellink_func(link)
+        if link.endswith(".md") and self.md_links and "//" not in link:
+            # Relative link, and md -> gmi conversion is enabled
+            link = link[:-2] + "gmi"
+
+        if self.link_func:
+            # A custom function to treat links is provided
+            link = self.link_func(link)
 
         if self.footnotes_enabled:
             if text is None or text.strip() == "":
