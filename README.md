@@ -171,12 +171,12 @@ with open("example.md", "r") as f:
     gemini = md2gemini(f.read())
 # Now the gemini variable contains your converted text as a string
 ```
-Options for the `md2gemini` function are similar to the command line ones above.
+Options for the `md2gemini` function are similar to the command line ones above, except for the parameter `link_func` which cannot be used from the command line.
 ```python
 def md2gemini(markdown, code_tag="", img_tag="[IMG]", indent=" ",
               ascii_table=False, frontmatter=False, jekyll=False,
               links="newline", plain=False, strip_html=False,
-              base_url="", md_links=False, rellink_func=None,
+              base_url="", md_links=False, link_func=None,
               table_tag="table"):
     """Convert the provided markdown text to the gemini format.
     code_tag: The default alt text for code blocks.
@@ -205,7 +205,8 @@ def md2gemini(markdown, code_tag="", img_tag="[IMG]", indent=" ",
 
     md_links: Convert all links to local files ending in .md to end with .gmi instead.
 
-    rellink_func: Custom function to apply to relative links.
+    link_func: Custom function to apply to links. This function takes a string containing the link
+    URL as parameter, and should return the new link..
 
     table_tag: "The default alt text for table blocks."
     """
