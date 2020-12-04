@@ -206,7 +206,7 @@ def md2gemini(markdown, code_tag="", img_tag="[IMG]", indent=" ",
     md_links: Convert all links to local files ending in .md to end with .gmi instead.
 
     link_func: Custom function to apply to links. This function takes a string containing the link
-    URL as parameter, and should return the new link..
+    URL as parameter, and should return the new link.
 
     table_tag: "The default alt text for table blocks."
     """

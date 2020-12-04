@@ -151,7 +151,7 @@ class GeminiRenderer(
             # Relative link, and md -> gmi conversion is enabled
             link = link[:-2] + "gmi"
 
-        if self.link_func:
+        if callable(self.link_func):
             # A custom function to treat links is provided
             link = self.link_func(link)
 
