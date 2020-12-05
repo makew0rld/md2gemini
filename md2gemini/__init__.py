@@ -40,6 +40,7 @@ def md2gemini(
     strip_html=False,
     base_url="",
     md_links=False,
+    link_func=None,
     table_tag="table",
 ):
     """Convert the provided markdown text to the gemini format.
@@ -68,6 +69,9 @@ def md2gemini(
     base_url: All links starting with a slash will have this URL prepended to them.
 
     md_links: Convert all links to local files ending in .md to end with .gmi instead.
+
+    link_func: Custom function to apply to links. This function takes a string containing the link
+    URL as parameter, and should return the new link.
 
     table_tag: "The default alt text for table blocks."
     """
@@ -112,6 +116,7 @@ def md2gemini(
         strip_html=strip_html,
         base_url=base_url,
         md_links=md_links,
+        link_func=link_func,
         table_tag=table_tag,
     )
     gem = mistune.create_markdown(
@@ -188,6 +193,7 @@ def __convert_file(file, args):
             strip_html=args.strip_html,
             base_url=args.base_url,
             md_links=args.md_links,
+            link_func=args.link_func,
             table_tag=args.table_tag,
         )
         print(gem)
@@ -206,6 +212,7 @@ def __convert_file(file, args):
                 strip_html=args.strip_html,
                 base_url=args.base_url,
                 md_links=args.md_links,
+                link_func=args.link_func,
                 table_tag=args.table_tag,
             )
         if args.write:
