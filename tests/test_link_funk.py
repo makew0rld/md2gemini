@@ -6,7 +6,7 @@ def f(md):
     return normalize(md2gemini(md, link_func=func))
 
 def func(link):
-    return foo
+    return "foo"
 
 def test_func_root_url():
     md = "[test](/url)"
