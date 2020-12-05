@@ -3,10 +3,7 @@ from md2gemini import md2gemini
 
 
 def f(md):
-    return normalize(md2gemini(md, link_func=func))
-
-def func(link):
-    return "foo"
+    return normalize(md2gemini(md, link_func=(lambda x: 'foo')))
 
 def test_func_root_url():
     md = "[test](/url)"
