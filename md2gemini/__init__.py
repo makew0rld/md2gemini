@@ -193,7 +193,7 @@ def __convert_file(file, args):
             strip_html=args.strip_html,
             base_url=args.base_url,
             md_links=args.md_links,
-            link_func=args.link_func,
+            link_func=None,
             table_tag=args.table_tag,
         )
         print(gem)
@@ -212,7 +212,7 @@ def __convert_file(file, args):
                 strip_html=args.strip_html,
                 base_url=args.base_url,
                 md_links=args.md_links,
-                link_func=args.link_func,
+                link_func=None,
                 table_tag=args.table_tag,
             )
         if args.write:
@@ -352,4 +352,4 @@ def main():
 
 
 __all__ = ["GeminiRenderer", "md2gemini", "main", "NEWLINE", "__version__"]
-__version__ = "1.8.0"
+__version__ = "1.8.1"
