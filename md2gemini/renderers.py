@@ -253,23 +253,22 @@ class GeminiRenderer(
             self.footnote_texts = []
             return ret
 
+        text += self._end_of_paragraph()
+
+        return PARAGRAPH_DELIM + text + PARAGRAPH_DELIM
+
+    def _end_of_paragraph(self):
         # Process footnotes if it should
         if self.links in ["paragraph", "copy"] and len(self.footnotes) > 0:
-            ret = (
-                PARAGRAPH_DELIM
-                + text
-                + PARAGRAPH_DELIM * 2
-                + self._render_footnotes()
-                + PARAGRAPH_DELIM
-            )
+            ret = PARAGRAPH_DELIM + self._render_footnotes() + PARAGRAPH_DELIM
             self.footnotes = []
             self.footnote_texts = []  # For self.links == "copy"
             return ret
 
-        return PARAGRAPH_DELIM + text + PARAGRAPH_DELIM
+        return ""
 
     def heading(self, text, level):
-        return "#" * level + " " + text + NEWLINE * 2
+        return self._end_of_paragraph() + "#" * level + " " + text + NEWLINE * 2
 
     def thematic_break(self):
         """80 column split using hyphens."""
@@ -365,6 +364,12 @@ class GeminiRenderer(
                     ret_items.append(self.indent * (level - 1) + "* " + item.strip())
 
         return NEWLINE.join(ret_items) + NEWLINE * 2
+
+    # def finalize(self, data):
+    #     return (
+    #         self._end_of_paragraph()
+    #         + super(GeminiRenderer, self).finalize(data)
+    #     )
 
     # Elements that rely on plugins:
 
