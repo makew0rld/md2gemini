@@ -147,9 +147,13 @@ class GeminiRenderer(
                 return link
             return text
 
-        if link.endswith(".md") and self.md_links and "//" not in link:
+        if self.md_links and "//" not in link:
             # Relative link, and md -> gmi conversion is enabled
-            link = link[:-2] + "gmi"
+            if link.endswith(".md"):
+                link = link[:-2] + "gmi"
+            elif ".md#" in link:
+                index = link.index(".md#")
+                link = link[: index + 1] + "gmi"
 
         if callable(self.link_func):
             # A custom function to treat links is provided
