@@ -216,8 +216,8 @@ def __convert_file(file, args):
                 table_tag=args.table_tag,
             )
         if args.write:
-            newfile = os.path.splitext(os.path.basename(file))[0] + ".gmi"
-            with open(os.path.join(args.dir, newfile), "w") as f:
+            newfile = os.path.splitext(file)[0] + ".gmi"
+            with open(newfile, "w") as f:
                 f.write(gem)
         else:
             print(gem)
@@ -238,9 +238,6 @@ def main():
         "--write",
         action="store_true",
         help="Write output to a new file of the same name, but with a .gmi extension.",
-    )
-    parser.add_argument(
-        "-d", "--dir", help="The directory to write files to, if --write is used."
     )
     parser.add_argument(
         "-a",
@@ -314,11 +311,6 @@ def main():
     args = parser.parse_args()
 
     # Validation of command line args
-    if args.write and args.dir is None:
-        args.dir = "."
-    if args.write and not os.path.isdir(args.dir):
-        print("Directory", args.dir, "cannot be found.", file=sys.stderr)
-        sys.exit(1)
     if args.indent == "tab":
         args.indent = "\t"
     elif not args.indent is None:

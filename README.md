@@ -108,7 +108,7 @@ It works directly in Python, or on the command line. The command line version ca
 
 ### Command line
 ```
-usage: md2gemini [-h] [--version] [-w] [-d DIR] [-a] [-f] [-j]
+usage: md2gemini [-h] [--version] [-w] [-a] [-f] [-j]
                  [--code-tag CODE_TAG] [--img-tag IMG_TAG]
                  [--table-tag TABLE_TAG] [-i INDENT] [-l LINKS] [-p] [-s]
                  [-b BASE_URL] [-m]
@@ -125,7 +125,6 @@ optional arguments:
   --version             show program's version number and exit
   -w, --write           Write output to a new file of the same name, but with
                         a .gmi extension.
-  -d DIR, --dir DIR     The directory to write files to, if --write is used.
   -a, --ascii-table     Use ASCII to create tables, not Unicode.
   -f, --frontmatter     Remove Jekyll and Zola style front matter before
                         converting.
