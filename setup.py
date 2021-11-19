@@ -8,7 +8,7 @@ setuptools.setup(
     name="md2gemini",  # Replace with your own username
     version=__version__,
     author="makeworld",
-    author_email="example@example.com",
+    author_email="makeworld@protonmail.com",
     description="Convert Markdown to the Gemini text format",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -22,7 +22,7 @@ setuptools.setup(
         "Topic :: Text Processing :: General",
         "Topic :: Text Processing :: Markup",
     ],
-    python_requires=">=3.5",
+    python_requires=">=3.7",
     install_requires=[
         "mistune>=2.0.0a4,<3",
         "cjkwrap",

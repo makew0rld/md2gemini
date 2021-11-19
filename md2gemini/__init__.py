@@ -139,9 +139,8 @@ def md2gemini(
     # Add in hard linebreaks
     gemtext = gemtext.replace(LINEBREAK, NEWLINE)
 
-    # Process footnotes if at-end was used
-    if links == "at-end":
-        gemtext += NEWLINE + renderer._render_footnotes() + NEWLINE
+    # Add remaining footnotes at and of file
+    gemtext += NEWLINE + renderer._render_footnotes() + NEWLINE
 
     # Remove double link delims, which are produced by multiple footnotes
     gemtext = gemtext.replace(LINK_DELIM + LINK_DELIM, LINK_DELIM)
