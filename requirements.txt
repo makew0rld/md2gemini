@@ -3,6 +3,5 @@ cjkwrap
 wcwidth
 
 # Includes testing/dev deps too:
-pytest==6.1.2; python_version < "3.6"
-pytest>=6.0.1,<7; python_version >= "3.6"
-black; python_version >= "3.6"
+pytest>=6.2.0,<7
+black
