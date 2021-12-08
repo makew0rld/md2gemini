@@ -308,8 +308,10 @@ class GeminiRenderer(
         )
         ret = ""
         for line in lines:
-            ret += "> " + line.strip() + NEWLINE
-        return ret
+            ret += (
+                "> " + line.strip() + LINEBREAK
+            )  # Linebreak used to prevent removal later
+        return PARAGRAPH_DELIM + ret + PARAGRAPH_DELIM
 
     def block_html(self, html):
         if self.strip_html:

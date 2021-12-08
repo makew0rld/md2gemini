@@ -36,3 +36,21 @@ def test_quote_with_hard_linebreaks():
 """.strip()
 
     assert f(md) == gem
+
+
+def test_quote_with_text_after():
+    # https://github.com/makeworld-the-better-one/md2gemini/issues/31
+
+    md = """
+> some quote
+
+More text
+    """
+
+    gem = """
+> some quote
+
+More text
+    """.strip()
+
+    assert f(md) == gem
