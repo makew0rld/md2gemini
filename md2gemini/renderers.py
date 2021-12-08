@@ -32,6 +32,7 @@ class GeminiRenderer(
         md_links=False,
         link_func=None,
         table_tag="table",
+        checklist=True,
     ):
         # Disable all the HTML renderer's messing around:
         super().__init__(escape=False, allow_harmful_protocols=True)
@@ -59,6 +60,7 @@ class GeminiRenderer(
         if table_tag is None:
             table_tag = "table"
         self.table_tag = table_tag
+        self.checklist = checklist
         # Tables
         self.unitable = None
         self.table_cols_align = []  # List of column alignments: ["l", "r", "c"]
@@ -444,6 +446,22 @@ class GeminiRenderer(
         return (
             text.strip() + "\n"
         )  # \n is used to separate cells from each other in other funcs
+
+    # Task list / check list support
+    # https://github.com/makeworld-the-better-one/md2gemini/issues/19
+
+    def task_list_item(self, text, level, checked):
+        if self.checklist:
+            if checked:
+                symbol = "\U0001f5f9"  # BALLOT BOX WITH BOLD CHECK
+            else:
+                symbol = "\u2610"  # BALLOT BOX
+        else:
+            if checked:
+                symbol = "[x]"
+            else:
+                symbol = "[ ]"
+        return self.list_item(symbol + " " + text, level)
 
     # Strikethough can't be supported
     # Footnotes aren't supported right now

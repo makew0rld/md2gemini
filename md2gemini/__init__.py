@@ -42,6 +42,7 @@ def md2gemini(
     md_links=False,
     link_func=None,
     table_tag="table",
+    checklist=True,
 ):
     """Convert the provided markdown text to the gemini format.
     code_tag: The default alt text for code blocks.
@@ -74,6 +75,8 @@ def md2gemini(
     URL as parameter, and should return the new link.
 
     table_tag: "The default alt text for table blocks."
+
+    checklist: whether to support GitHub-style checklist list items: [ ] and [x]
     """
 
     if len(markdown) == 0:
@@ -118,9 +121,10 @@ def md2gemini(
         md_links=md_links,
         link_func=link_func,
         table_tag=table_tag,
+        checklist=checklist,
     )
     gem = mistune.create_markdown(
-        escape=False, renderer=renderer, plugins=["table", "url"]
+        escape=False, renderer=renderer, plugins=["table", "url", "task_lists"]
     )
     gemtext = gem(markdown)
 
@@ -201,6 +205,7 @@ def __convert_file(file, args):
             md_links=args.md_links,
             link_func=None,
             table_tag=args.table_tag,
+            checklist=not args.no_checklist,
         )
         print(gem)
     else:
@@ -220,6 +225,7 @@ def __convert_file(file, args):
                 md_links=args.md_links,
                 link_func=None,
                 table_tag=args.table_tag,
+                checklist=not args.no_checklist,
             )
         if args.write:
             newfile = os.path.splitext(os.path.basename(file))[0] + ".gmi"
@@ -316,6 +322,12 @@ def main():
         "--md-links",
         action="store_true",
         help="Convert all links to local files ending in .md to end with .gmi instead.",
+    )
+    parser.add_argument(
+        "-c",
+        "--no-checklist",
+        action="store_true",
+        help="Disable rendering of GitHub-style checklist list items: [ ] and [x]",
     )
     args = parser.parse_args()
 
