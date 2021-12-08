@@ -374,12 +374,6 @@ class GeminiRenderer(
 
         return NEWLINE.join(ret_items) + NEWLINE * 2
 
-    # def finalize(self, data):
-    #     return (
-    #         self._end_of_paragraph()
-    #         + super(GeminiRenderer, self).finalize(data)
-    #     )
-
     # Elements that rely on plugins:
 
     # Tables

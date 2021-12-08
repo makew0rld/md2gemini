@@ -24,8 +24,31 @@ def test_paragraph_links():
 
 * bar[2]
 
-
 => bar.md 2: bar.md
 """.strip()
 
     assert f(md, links="paragraph") == gem
+
+
+def test_links_in_lists():
+    # https://github.com/makeworld-the-better-one/md2gemini/issues/30
+
+    md = "* before [bar](/foo) after \n* next item"
+    gem = """
+* before 
+=> /foo bar
+after
+* next item
+    """.strip()
+
+    assert f(md, "newline") == gem
+
+    md = "* before [bar](/foo) after \n* next item"
+    gem = """
+* before bar after
+* next item
+
+=> /foo bar
+    """.strip()
+
+    assert f(md, "copy") == gem

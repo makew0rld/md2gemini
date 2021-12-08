@@ -171,6 +171,13 @@ def md2gemini(
     gemtext = NEWLINE.join(gemlines)
     gemtext = gemtext.rstrip().lstrip("\r\n")
 
+    # Remove more than two newlines in a row, as there's no way to induce that in valid markdown
+    # So any time there's more than two newlines in output that's a bug with md2gemini
+    # So it gets fixed here. Hacky, but it works.
+    gemtext = re.sub(
+        r"(?:" + NEWLINE + r"){3}(?:" + NEWLINE + r")*", NEWLINE * 2, gemtext
+    )
+
     return gemtext
 
 
