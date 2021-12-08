@@ -300,7 +300,12 @@ class GeminiRenderer(
     def block_quote(self, text):
         """Add a quote mark to the beginning of each line."""
 
-        lines = text.replace(PARAGRAPH_DELIM, "\n").strip().splitlines()
+        lines = (
+            text.replace(PARAGRAPH_DELIM, "\n")
+            .replace(LINEBREAK, "\n")
+            .strip()
+            .splitlines()
+        )
         ret = ""
         for line in lines:
             ret += "> " + line.strip() + NEWLINE
