@@ -24,7 +24,7 @@ setuptools.setup(
     ],
     python_requires=">=3.7",
     install_requires=[
-        "mistune>=2.0.0a4,<3",
+        "mistune>=2.0.0,<3",
         "cjkwrap",
         "wcwidth",
     ],

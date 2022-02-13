@@ -160,6 +160,8 @@ optional arguments:
                         prepended to them.
   -m, --md-links        Convert all links to local files ending in .md to end
                         with .gmi instead.
+  -c, --no-checklist    Disable rendering of GitHub-style checklist list
+                        items: [ ] and [x]
 
 ```
 
@@ -177,7 +179,7 @@ def md2gemini(markdown, code_tag="", img_tag="[IMG]", indent=" ",
               ascii_table=False, frontmatter=False, jekyll=False,
               links="newline", plain=False, strip_html=False,
               base_url="", md_links=False, link_func=None,
-              table_tag="table"):
+              table_tag="table", checklist=True):
     """Convert the provided markdown text to the gemini format.
     code_tag: The default alt text for code blocks.
 
@@ -209,5 +211,7 @@ def md2gemini(markdown, code_tag="", img_tag="[IMG]", indent=" ",
     URL as parameter, and should return the new link.
 
     table_tag: "The default alt text for table blocks."
+
+    checklist: whether to support GitHub-style checklist list items: [ ] and [x]
     """
 ```
