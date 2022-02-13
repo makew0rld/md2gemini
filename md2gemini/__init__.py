@@ -139,8 +139,9 @@ def md2gemini(
     # Add in hard linebreaks
     gemtext = gemtext.replace(LINEBREAK, NEWLINE)
 
-    # Add remaining footnotes at and of file
-    gemtext += NEWLINE + renderer._render_footnotes() + NEWLINE
+    # Process footnotes if at-end was used
+    if links == "at-end":
+        gemtext += NEWLINE + renderer._render_footnotes() + NEWLINE
 
     # Remove double link delims, which are produced by multiple footnotes
     gemtext = gemtext.replace(LINK_DELIM + LINK_DELIM, LINK_DELIM)
@@ -239,6 +240,9 @@ def main():
         help="Write output to a new file of the same name, but with a .gmi extension.",
     )
     parser.add_argument(
+        "-d", "--dir", help="The directory to write files to, if --write is used."
+    )
+    parser.add_argument(
         "-a",
         "--ascii-table",
         action="store_true",
@@ -310,6 +314,11 @@ def main():
     args = parser.parse_args()
 
     # Validation of command line args
+    if args.write and args.dir is None:
+        args.dir = "."
+    if args.write and not os.path.isdir(args.dir):
+        print("Directory", args.dir, "cannot be found.", file=sys.stderr)
+        sys.exit(1)
     if args.indent == "tab":
         args.indent = "\t"
     elif not args.indent is None:
