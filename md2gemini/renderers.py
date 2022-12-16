@@ -352,7 +352,7 @@ class GeminiRenderer(
                     new_text += LINEBREAK + item + LINEBREAK
                 else:
                     if new_text:
-                        new_text += " " + item
+                        new_text += ' ' + item.lstrip()
                     else:
                         new_text = item
         return new_text + NEWLINE
