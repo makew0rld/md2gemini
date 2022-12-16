@@ -2,8 +2,8 @@
 All the renderers that convert markdown to gemini.
 """
 
+import re
 import mistune
-import functools
 from .unitable import UniTable, ArraySizeError
 
 
@@ -11,6 +11,8 @@ NEWLINE = "\r\n"  # For Windows support
 PARAGRAPH_DELIM = "\x02"  # The marker for paragraph start and end, for post processing
 LINK_DELIM = "\x03"
 LINEBREAK = "\x01"  # Represents a hard linebreak that should not be changed
+
+FENCE_EXPR = re.compile(r"^( *)```")
 
 
 class GeminiRenderer(
@@ -329,9 +331,31 @@ class GeminiRenderer(
         # We need to strip whitespace from these items and add it ourselves,
         # since the text doesn't guarantee any particular formatting for
         # these items.
-        items = [item.strip() for item in text.splitlines()]
-        text = functools.reduce(lambda x, y: x + " " + y, items)
-        return text + NEWLINE
+        new_text = ""
+        last_offset = 0
+        in_fence = False
+        text = text.replace(PARAGRAPH_DELIM, PARAGRAPH_DELIM + "\r\n")
+        for item in text.splitlines():
+            was_in_fence = in_fence
+            m = FENCE_EXPR.match(item)
+            if m:
+                this_offset = len(m.groups()[0])
+                in_fence = (
+                    not in_fence if m and this_offset == last_offset else in_fence
+                )
+                if in_fence and not was_in_fence:
+                    last_offset = this_offset
+            if in_fence:
+                new_text += LINEBREAK + item
+            else:
+                if was_in_fence:
+                    new_text += LINEBREAK + item + LINEBREAK
+                else:
+                    if new_text:
+                        new_text += " " + item.lstrip()
+                    else:
+                        new_text = item
+        return new_text + NEWLINE
 
     def list(self, text, ordered, level, start=None):
         """Gemini only defines single-level unordered lists.
