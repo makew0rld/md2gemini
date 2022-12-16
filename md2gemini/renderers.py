@@ -4,7 +4,6 @@ All the renderers that convert markdown to gemini.
 
 import re
 import mistune
-import functools
 from .unitable import UniTable, ArraySizeError
 
 
