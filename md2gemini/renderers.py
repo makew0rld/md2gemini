@@ -311,8 +311,6 @@ class GeminiRenderer(
             .splitlines()
         )
 
-        print(lines)
-
         ret = ""
         for line in lines[:-1]:  # All lines but last
             ret += (
