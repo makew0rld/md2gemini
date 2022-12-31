@@ -312,12 +312,14 @@ class GeminiRenderer(
         )
 
         ret = ""
-        for line in lines[:-1]:  # All lines but last
-            ret += (
-                "> " + line.strip() + LINEBREAK
-            )  # Linebreak used to prevent removal later
-        # Add last line
-        ret += "> " + lines[-1].strip()
+        for i, line in enumerate(lines):
+            line = line.strip()
+            link = line and line[0] == LINK_DELIM
+            ret += LINEBREAK if link else "> "
+            ret += line
+            if i < len(lines) - 1:
+                # Linebreak used to prevent removal later
+                ret += LINEBREAK
 
         return PARAGRAPH_DELIM + ret + PARAGRAPH_DELIM
 
