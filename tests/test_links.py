@@ -33,9 +33,9 @@ def test_paragraph_links():
 def test_links_in_lists():
     # https://github.com/makeworld-the-better-one/md2gemini/issues/30
 
-    md = "* before [bar](/foo) after \n* next item"
+    md = "* 1before [bar](/foo) after \n* next item"
     gem = """
-* before 
+* 1before 
 => /foo bar
 after
 * next item
@@ -43,12 +43,71 @@ after
 
     assert f(md, "newline") == gem
 
-    md = "* before [bar](/foo) after \n* next item"
+    md = "* 2before [bar](/foo) after \n* next item"
     gem = """
-* before bar after
+* 2before bar after
 * next item
 
 => /foo bar
     """.strip()
 
     assert f(md, "copy") == gem
+
+
+def test_many_footnote_links():
+    md = """
+* [foo](foo.md)
+
+# headline
+
+* [bar](bar.md)
+* [bar2](bar2.md)
+
+Some text after
+
+* [foo2](foo2.md)
+    """
+
+    gem = """
+* foo[1]
+
+=> foo.md 1: foo.md
+
+# headline
+
+* bar[2]
+* bar2[3]
+
+=> bar.md 2: bar.md
+=> bar2.md 3: bar2.md
+
+Some text after
+
+* foo2[4]
+
+=> foo2.md 4: foo2.md
+""".strip()
+
+    assert f(md, links="paragraph") == gem
+
+
+def test_link_in_quote():
+    md = """
+Text before
+
+> quote with [link](https://example.com) in it
+
+Text after
+    """
+
+    gem = """
+Text before
+
+> quote with link[1] in it
+
+=> https://example.com 1: https://example.com
+
+Text after
+    """.strip()
+
+    assert f(md, links="paragraph") == gem

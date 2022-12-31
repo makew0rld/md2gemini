@@ -24,6 +24,13 @@ def test_ends_with_no_newlines():
     assert f(md) == gem
 
 
+def test_extra_newlines():
+    # https://github.com/makeworld-the-better-one/md2gemini/issues/40
+    md = "```\ntest\n\n\ntest2\n```\nokay"
+    gem = "```\ntest\n\n\ntest2\n```\n\nokay"
+    assert f(md) == gem
+
+
 def test_nested_fences():
     md = """
 ```

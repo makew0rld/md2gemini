@@ -144,7 +144,7 @@ def md2gemini(
     gemtext = gemtext.replace(LINEBREAK, NEWLINE)
 
     # Add remaining footnotes at and of file
-    gemtext += NEWLINE + renderer._render_footnotes() + NEWLINE
+    gemtext += renderer._render_footnotes()
 
     # Remove double link delims, which are produced by multiple footnotes
     gemtext = gemtext.replace(LINK_DELIM + LINK_DELIM, LINK_DELIM)
@@ -174,13 +174,6 @@ def md2gemini(
             gemlines[i + 1] = gemlines[i + 1].lstrip()
     gemtext = NEWLINE.join(gemlines)
     gemtext = gemtext.rstrip().lstrip("\r\n")
-
-    # Remove more than two newlines in a row, as there's no way to induce that in valid markdown
-    # So any time there's more than two newlines in output that's a bug with md2gemini
-    # So it gets fixed here. Hacky, but it works.
-    gemtext = re.sub(
-        r"(?:" + NEWLINE + r"){3}(?:" + NEWLINE + r")*", NEWLINE * 2, gemtext
-    )
 
     return gemtext
 

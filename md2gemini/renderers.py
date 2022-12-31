@@ -310,11 +310,17 @@ class GeminiRenderer(
             .strip()
             .splitlines()
         )
+
+        print(lines)
+
         ret = ""
-        for line in lines:
+        for line in lines[:-1]:  # All lines but last
             ret += (
                 "> " + line.strip() + LINEBREAK
             )  # Linebreak used to prevent removal later
+        # Add last line
+        ret += "> " + lines[-1].strip()
+
         return PARAGRAPH_DELIM + ret + PARAGRAPH_DELIM
 
     def block_html(self, html):
@@ -400,7 +406,12 @@ class GeminiRenderer(
                 else:
                     ret_items.append(self.indent * (level - 1) + "* " + item.strip())
 
-        return NEWLINE.join(ret_items) + NEWLINE * 2
+        return (
+            PARAGRAPH_DELIM
+            + LINEBREAK.join(ret_items)
+            + self._end_of_paragraph()
+            + PARAGRAPH_DELIM
+        )
 
     # Elements that rely on plugins:
 
