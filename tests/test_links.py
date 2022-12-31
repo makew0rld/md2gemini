@@ -113,3 +113,31 @@ Text after
     """.strip()
 
     assert f(md, links="paragraph") == gem
+
+
+def test_link_in_quote_newline():
+    # https://github.com/makeworld-the-better-one/md2gemini/issues/44
+
+    md = """
+Text before
+
+> quote with newline link in it
+>
+> [link](https://example.com)
+
+Text after
+    """
+
+    gem = """
+Text before
+
+> quote with newline link in it
+> 
+> link[1]
+
+=> https://example.com 1: https://example.com
+
+Text after
+    """.strip()
+
+    assert f(md, links="paragraph") == gem
