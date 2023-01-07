@@ -145,7 +145,7 @@ class GeminiRenderer(
             if text is None:
                 return link
             return text
-        if self.links == "off":
+        if self.links == "off" or self.links == "images-only":
             # Don't link, just leave the text as it was written
             if text is None:
                 return link
@@ -177,6 +177,9 @@ class GeminiRenderer(
 
         if alt is None:
             alt = ""
+
+        if self.links == "images-only":
+            return self._gem_link(src, alt.strip() + self.img_tag)
 
         if self.links == "off":
             if alt == "":

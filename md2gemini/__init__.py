@@ -59,8 +59,9 @@ def md2gemini(
 
     links: Set to 'off' to turn off links, 'paragraph' to have footnotes at the end of each
     paragraph, or 'at-end' to have footnotes at the end of the document. You can also set it
-    to 'copy' to put links that copy the inline link text after each paragraph. Not using this
-    flag, or having any other value will result in regular, newline links.
+    to 'copy' to put links that copy the inline link text after each paragraph. You can also
+    set it to 'images-only' which is the same as 'off' but image hyperlinks will be converted.
+    Not using this flag, or having any other value will result in regular, newline links.
 
     plain: Set to True to remove special markings from output that text/gemini doesn't support,
     like the asterisks for bold and italics, as well as inline HTML.
@@ -290,7 +291,7 @@ def main():
         "-l",
         "--links",
         type=str,
-        help="Set to 'off' to turn off links, 'paragraph' to have footnotes at the end of each paragraph, or 'at-end' to have footnotes at the end of the document. You can also set it to 'copy' to put links that copy the inline link text after each paragraph. Not using this flag, or having any other value will result in regular, newline links.",
+        help="Set to 'off' to turn off links, 'paragraph' to have footnotes at the end of each paragraph, or 'at-end' to have footnotes at the end of the document. You can also set it to 'copy' to put links that copy the inline link text after each paragraph. You can also set it to 'images-only' which is the same as 'off' but image hyperlinks will be converted. Not using this flag, or having any other value will result in regular, newline links",
     )
     parser.add_argument(
         "-p",
