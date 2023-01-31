@@ -2,12 +2,13 @@
 All the renderers that convert markdown to gemini.
 """
 
+import os
 import re
 import mistune
 from .unitable import UniTable, ArraySizeError
 
 
-NEWLINE = "\r\n"  # For Windows support
+NEWLINE = os.linesep  # OS-dependent newline character(s)
 PARAGRAPH_DELIM = "\x02"  # The marker for paragraph start and end, for post processing
 LINK_DELIM = "\x03"
 LINEBREAK = "\x01"  # Represents a hard linebreak that should not be changed
