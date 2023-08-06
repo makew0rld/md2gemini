@@ -9,6 +9,10 @@ One of its key features is that it can convert inline links into footnotes. It a
 
 Anything else that it doesn't understand will remain the same as when you wrote it, like strikethrough for example.
 
+## Project Status
+
+md2gemini is now archived. It’s always been a pile of hacks, and now I’m not that invested in continuing it. See my [blog post](https://www.makeworld.space/2023/08/bye_gemini.html) for details.
+
 ## Link modes
 
 md2gemini has several link modes, because text/gemini doesn't support inline links. These modes can be set by passing different strings to the `-l` or `--links` flags on the command line, or the `links=` argument in Python.
