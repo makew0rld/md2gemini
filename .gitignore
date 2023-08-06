@@ -1,3 +1,5 @@
+.venv
+
 # Patch output
 *.orig
 
